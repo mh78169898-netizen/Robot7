@@ -1,0 +1,22 @@
+//#define _CRT_SECURE_NO_WARNINGS
+//#include <stdio.h>
+//
+//int main()
+//{
+//	//int a = 10;
+//
+//	//while (a > 0) {
+//	//	a--;
+//	//	//index에 대한 증가감
+//	//	
+//	//}
+//	////한번만 출력!!
+//	//printf("a : %d\n", a);
+//
+//	//1~10까지 출력하는 while문 코드
+	int i = 0;
+	while (i < 10) {
+		printf(" %d\n", ++i);
+	}
+	return 0;
+}
