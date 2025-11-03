@@ -14,7 +14,7 @@ int main()
 	return 0;
 }
 
-//while문 버전'
+//while문 버전
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 
