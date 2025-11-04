@@ -5,7 +5,7 @@
 void my_print() {
 	printf("my_print()\n");
 }
-//2.return(0), argumen(x)
+//2.return(o), argumen(x)
 char my_char() {
 	return 'Z';
 }
@@ -13,11 +13,11 @@ char my_char() {
 void my_int(int a) {
 	printf("%d\n", a);
 }
-//4.return(0), argumen(o)
+//4.return(o), argumen(o)
 int my_int2(int b) {
 	return b;
 }
-//5.return(0), argumen(o) - 다수
+//5.return(o), argumen(o) - 다수
 int sum(int a, int b, int c) {
 	int res = a + b + c;
 	return res;
