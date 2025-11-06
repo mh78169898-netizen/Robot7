@@ -1,7 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
+#include <limits.h>
 
-void print_max(int arr[]);
+void print_max(int arr[]);//int* arr 도 가능
 
 int main()
 {
@@ -13,7 +14,7 @@ int main()
 }
 
 void print_max(int arr[]) {
-	int max = 0;
+	int max = INT_MIN;//변수의 Scope
 	for (int i = 0; i < 7; i++) {
 		if (arr[i] > max) {
 			max = arr[i];
