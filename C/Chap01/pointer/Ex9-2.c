@@ -7,7 +7,7 @@ int main()
 	int* pa;
 
 	pa = &a; //a변수의 시작주소를 pa에 넣는다.(int*)
-	*pa = 10;
+	*pa = 10; //int형 포인터 타입으로 설정
 
 	printf("*pa변수의 주소값 : %u\n", &pa);
 	printf("a변수의 주소값 : %u\n",&a);
