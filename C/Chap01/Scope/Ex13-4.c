@@ -21,7 +21,7 @@ int main()
 	return 0;
 }
 
-void auto_func() {
+void auto_func() {//함수가 종료되면 0으로 초기화 됨
 	auto int a = 0;
 	a++;
 	printf("%d\n", a);
