@@ -21,7 +21,7 @@ int main()
 
 	printf("나이 입력 : ");
 	fgets(sAge, 10, stdin); //17 --> "17
-	int age = atoi(sAge);
+	int age = atoi(sAge); //atoi:문자열을 정수로 바꿔주는 함수
 
 	printf("이름 입력 : ");
 	fgets(name, 20, stdin);
