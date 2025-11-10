@@ -27,7 +27,7 @@ void auto_func() {//함수가 종료되면 0으로 초기화 됨
 	printf("%d\n", a);
 }
 
-void static_func() {
+void static_func() {//최초만 초기화, 이후로는 누적
 	static int a = 0;
 	a++;
 	printf("%d\n", a);
