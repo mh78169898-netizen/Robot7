@@ -15,9 +15,9 @@ int main()
 		}
 	}
 	//출력
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {//라인, 사람
 		tot = 0;
-		for (int j = 0; j < 4; j++) {
+		for (int j = 0; j < 4; j++) {//각 과목
 			tot += score[i][j];
 		}
 		avg = tot / 4.0;
