@@ -13,6 +13,7 @@ int main()
 
 	gildong.num = 2;
 	gildong.grade = 3.4;
+	
 	printf("학번 : %d\n", gildong.num);
 	printf("학점 : %.1lf\n", gildong.grade);
 	return 0;
