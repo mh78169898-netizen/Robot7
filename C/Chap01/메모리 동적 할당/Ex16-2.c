@@ -10,7 +10,7 @@ int main()
 	int* pi;
 	int sum = 0;
 	//배열을 heap에 할당해보자
-	pi = (int*)malloc(5 * sizeof(int));
+	pi = (int*)malloc(5 * sizeof(int));//int pi[5]
 	printf("다섯명의 나이를 입력하시오 : ");
 	for (int i = 0; i < 5; i++) {
 		scanf("%d", &pi[i]);//heap에 있는 변수의 공간
