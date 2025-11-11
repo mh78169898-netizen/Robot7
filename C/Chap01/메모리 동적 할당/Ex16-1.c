@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include <stdlib.h>
-#include <memory.h>
+#include <stdlib.h>//위나 아래쪽 어느 하나만 사용해도 문제 없음
+#include <memory.h>//위나 아래쪽 어느 하나만 사용해도 문제 없음
 
 int tot;
 
