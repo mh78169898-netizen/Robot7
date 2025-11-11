@@ -12,6 +12,7 @@ int main()
 		printf("문자열을 입력하세요 : ");
 		fgets(temp, sizeof(temp), stdin);
 		str[i] = (char*)malloc(strlen(temp) + 1); //'\0' 문자가 들어가는 곳
+		//str[i] = (char*)calloc(strlen(temp)+ 1, sizeof(char));
 		strcpy(str[i], temp);
 	}
 
