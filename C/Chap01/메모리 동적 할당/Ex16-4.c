@@ -11,7 +11,7 @@ int main()
 	for (int i = 0; i < 3; i++) {
 		printf("문자열을 입력하세요 : ");
 		fgets(temp, sizeof(temp), stdin);
-		str[i] = (char*)malloc(strlen(temp) + 1); //\0문자가 들어가는 곳
+		str[i] = (char*)malloc(strlen(temp) + 1); //'\0' 문자가 들어가는 곳
 		strcpy(str[i], temp);
 	}
 
