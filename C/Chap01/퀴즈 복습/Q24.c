@@ -13,7 +13,7 @@ struct book
 	char title[50];
 
 	char author[30];
-
+//char* author;
 	int page;
 
 	int price;
@@ -31,7 +31,7 @@ int main()
 	strcpy(a.title, "C프로그래밍");
 
 	strcpy(a.author, "데니스");
-
+//a.author = "데니스";
 	a.page = 180;
 
 	a.price = 18000;
