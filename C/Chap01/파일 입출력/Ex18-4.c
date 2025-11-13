@@ -7,14 +7,14 @@ int main()
 
     while (1)
     {
-        // ch = getchar();
-        ch = fgetc(stdin);
+        ch = getchar();
+        //ch = fgetc(stdin);
         if (ch == EOF) //wsl Ubuntu ^z --> ^c로 종료함
         {
             break;
         }
-        //putchar(ch);
-        fputc(ch, stdout);
+        putchar(ch);
+        //fputc(ch, stdout);
     }
 
     return 0;
