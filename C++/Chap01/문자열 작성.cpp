@@ -10,4 +10,21 @@ int main()
     //인삿말 작성
     std::cout << "Hello, " << name << "!" << std::endl;
 }
+------------------------최신 문법 ver--------------------------
+#include <iostream>
+#include <string>
+
+
+
+int main()
+{
+    using namespace std;
+
+    cout << "당신의 첫번째 이름을 입력하세요 : ";
+    string name;//string 변수 선언
+    cin >> name;
+
+    //인삿말 작성
+    cout << "Hello, " << name << "!" << endl;
+}
 
