@@ -1,0 +1,44 @@
+point 헤더 파일
+//point.h
+//#pragma once
+//header파일 하는 역할 : 함수 정의,구조체 정의
+
+#ifndef _POINT_H_
+#define _POINT_H_
+
+//void myprint(); 함수 헤더
+
+typedef struct {
+	int x;
+	int y;
+}Point;
+
+extern Point Gpoint;
+
+#endif
+////////////////////////////////////////////
+point 소스 파일
+#include "point.h"
+
+//void myprint()
+//{
+//	//함수의 구현부가 들어간다.
+//}
+
+Point Gpoint = { 0,0 };
+/////////////////////////////////////////////
+메인 파일
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include "point.h" //사용자 정의 헤더
+
+int main()
+{
+	printf("첫 좌표 Gpoint =  (%d,%d)\n", Gpoint.x, Gpoint.y);
+
+	Gpoint.x = 10;
+	Gpoint.y = 20;
+
+	printf("변환 좌표 Gpoint =  (%d,%d)\n", Gpoint.x, Gpoint.y);
+	return 0;
+}
