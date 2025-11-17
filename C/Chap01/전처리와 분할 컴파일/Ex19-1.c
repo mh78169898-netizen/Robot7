@@ -9,7 +9,7 @@ typedef struct
 2.메인 코드
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include "student.h"
+#include "student.h" //사용자 정의 헤더
 
 int main()
 {
