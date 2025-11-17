@@ -1,11 +1,12 @@
-point 헤더 파일
+point 헤더 파일(#pragma once만 사용해도 된다.)
 //point.h
-//#pragma once
+
 //header파일 하는 역할 : 함수 정의,구조체 정의
 
 #ifndef _POINT_H_
 #define _POINT_H_
 
+//#pragma once
 //void myprint(); 함수 헤더
 
 typedef struct {
