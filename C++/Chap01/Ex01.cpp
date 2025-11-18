@@ -9,12 +9,12 @@ int main()
     cin >> name;
 
     const string greeting = "Hello, " + name + "!";
-
+    //안삿말의 2번째,4번째 행
     const string spaces(greeting.size(), ' ');
     const string second = "* " + spaces + " *";
-
+    //인삿말의 1번째,5번째 행
     const string first(second.size(), '*');
-
+    //출력
     cout << endl;
     cout << first << endl;
     cout << second << endl;
