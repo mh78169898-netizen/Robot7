@@ -26,7 +26,7 @@ int main()
     return 0;
 }
 -----------------------------배열 사용-----------------------------------------------
-  #include <iostream>
+#include <iostream>
 
 struct studentinfo {
     char bloodtype;
@@ -43,7 +43,8 @@ int main()
         {'0', 20031128, 3.5}, {'A', 19961219, 2.3}
     };
 
-    for (int i = 0; i < 2; i++) {
+    int cnt = sizeof(si) / sizeof(si[0]);
+    for (int i = 0; i < cnt; i++) {
         cout << "혈액형 : " << si[i].bloodtype << endl;
         cout << "학번 : " << si[i].stdNumber << endl;
         cout << "성적 : " << si[i].grade << "\n\n" << endl;
@@ -51,4 +52,6 @@ int main()
     
     return 0;
 }
+
+
 
