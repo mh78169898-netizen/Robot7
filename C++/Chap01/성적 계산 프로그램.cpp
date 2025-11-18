@@ -33,6 +33,8 @@ int main()
         << 0.2 * mid + 0.4 * fin + 0.4 * sum / count 
         << setprecision(prec) << endl;
 
+    //printf("%.2lf")로 소숫점을 찍을 수 있다.
+
     return 0;
 
 }
