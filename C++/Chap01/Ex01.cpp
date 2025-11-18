@@ -7,7 +7,7 @@ int main()
     cout << "please enter your first name: ";
     string name;
     cin >> name;
-
+    //출력하는 메세지 구성
     const string greeting = "Hello, " + name + "!";
     //안삿말의 2번째,4번째 행
     const string spaces(greeting.size(), ' ');
