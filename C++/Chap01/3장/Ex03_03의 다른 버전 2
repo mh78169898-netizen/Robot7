@@ -1,0 +1,28 @@
+.hpp를 사용해서 코드를 분리한 버전
+1.헤더 파일
+#pragma once
+#include <iostream>
+
+class Circle
+{
+private:
+	int rid;
+public:
+	Circle() {
+		rid = 1;
+		std::cout << "반지름 : " << rid << std::endl;
+	}
+
+};
+
+main파일
+
+#include <iostream>
+#include "circle.hpp"
+
+int main()
+{
+    Circle circle;
+
+    return 0;
+}
