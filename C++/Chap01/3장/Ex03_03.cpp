@@ -1,3 +1,4 @@
+//생성자-생성자 오버로딩(객체의 초기화에 생성자가 이용된다.)
 #include <iostream>
 using namespace std;
 
