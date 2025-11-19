@@ -8,7 +8,7 @@ public:
      int rid;
      string color;
     //2.생성자
-    Circle():rid(1),color("red")//초기화 변수
+    Circle():rid(1),color("red")//초기화 기법
     { 
         cout << "circle의 반지름 : " << rid << endl;
         cout << "circle의 색상 : " << color << endl;
