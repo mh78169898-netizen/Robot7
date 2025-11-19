@@ -1,0 +1,54 @@
+03_03의 코드를 헤더 파일과 cpp파일로 나눠서 작성한 경우
+1.헤더 파일
+
+#pragma once
+class Circle
+{
+private:
+	int rid;
+public:
+	Circle();
+	Circle(int r);
+	double getArea();
+};
+
+2.circle.cpp파일
+
+#include <iostream>
+#include "circle.h"
+using namespace std;
+
+Circle::Circle() {
+    rid = 1;
+    cout << "반지름 " << rid;
+    cout << "원 생성 " << endl;
+}
+
+Circle::Circle(int r) {
+    rid = r;
+    cout << "반지름 " << rid;
+    cout << "원 생성 " << endl;
+}
+
+double Circle::getArea() {
+    return 3.14 * rid * rid;
+}
+
+3.main파일
+
+#include <iostream> 
+using namespace std;
+
+#include "circle.h"
+
+int main() {
+	Circle donut;
+	double area = donut.getArea();
+	cout << "donut 면적은 ";
+	cout << area << endl;
+
+	Circle pizza(30);
+	area = pizza.getArea();
+	cout << "pizza 면적은 ";
+	cout << area << endl;
+}
