@@ -13,10 +13,10 @@ public:
 
 int main()
 {
-   Circle donut;
+   Circle donut; //오브젝트,인스턴스
    cout << "donut : 넓이 : " << donut.getArea() << endl;
 
-   Circle* p;
+   Circle* p;//포인터변수(객체를 가리키는 포인터)
    p = &donut; //stack
    cout << "p : 넓이 : " << p->getArea() << endl;
    cout << "p : 넓이 : " << (*p).getArea() << endl; //원 문법은 이게 맞음
