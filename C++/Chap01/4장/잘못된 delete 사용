@@ -1,0 +1,20 @@
+-적절치 못한 포인터로 delete하면 실행 시간 오류 발생-
+1.동적으로 할당 받지 않는 메모리 반환 – 오류
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+int main()
+{
+    int n;
+    int* p;
+    int* p2;
+
+    p = &n; //stack
+    delete p;//이 부분에서 오류 발생
+
+    p2 = new int; //heap
+    delete p2;
+    return 0;
+}
+2.동일한 메모리 두 번 반환 - 오류
