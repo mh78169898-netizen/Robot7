@@ -17,11 +17,14 @@ int main()
    cout << "donut : 넓이 : " << donut.getArea() << endl;
 
    Circle* p;
-   p = &donut;
+   p = &donut; //stack
    cout << "p : 넓이 : " << p->getArea() << endl;
+   cout << "p : 넓이 : " << (*p).getArea() << endl; //원 문법은 이게 맞음
 
-   Circle* donut2 = new Circle(); //C#이나 java식 표현
+   //C#이나 java식 표현
+   Circle* donut2 = new Circle(); //heap
    cout << "donut2 : 넓이 : " << donut2->getArea() << endl;
+   cout << "donut2 : 넓이 : " << (*donut2).getArea() << endl;
    delete donut2;
    
     return 0;
