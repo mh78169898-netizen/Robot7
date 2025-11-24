@@ -1,0 +1,45 @@
+#include <iostream>
+#include <cstdlib>
+#include <memory>
+#include <string>
+using namespace std;
+
+class TV{
+protected:
+    int size; //스크린 크기 속성
+public:
+    TV(){size = 20;} //기본 생성자
+    TV(int size){this->size = size;} //TV가 객체가 되었을때, size가 된다.
+    int getSize(){return this->size;} //맴버 메소드
+};
+class WideTV : public TV{
+protected:
+    bool videoIn;
+public:
+    //디폴트 생성자 없음
+    WideTV(int size, bool videoIn):TV(size){
+        this->videoIn = videoIn;
+    }
+    bool getVideoIn(){return this->videoIn;} //맴버 메소드
+};
+class SmartTV : public WideTV{
+protected:
+    string ipAddr;
+public:
+    //디폴트 생성자는 없음
+    SmartTV(string ipAddr, int size):WideTV(size,true){
+        this->ipAddr = ipAddr;
+    }
+    //맴버 함수
+    string getIpAddr(){return ipAddr;}
+};
+
+int main()
+{
+    SmartTV htv("192.0.0.1", 32);
+    cout << "size = " << htv.getSize() << endl;
+    cout << "vidioIn = " << htv.getVideoIn() << endl;
+    cout << "IP = " << htv.getIpAddr() << endl;
+
+    return 0;
+}
