@@ -6,8 +6,8 @@ using namespace std;
 class Hero
 {
 private:
-    string treasure;
-protected: //부모,자식 간에만 public으로 취급
+    string treasure; // 클래스 내부에서만 접근 가능
+protected: //자식(파생) 클래스에서만 직접 접근 가능 (외부에서는 private와 동일)
     int level;
     string name;
 public:
@@ -60,3 +60,8 @@ int main()//또 다른 외부 클래스처럼 생각해야 한다.
 
     return 0;
 }
+
+클래스 내부,상속받은 자식 클래스,클래스 외부 (main 등)
+private,O,X,X
+protected,O,O,X
+public,O,O,O
