@@ -30,7 +30,7 @@ int main()
     list[1] = new Knight();
     list[2] = new Wizard();
 
-    //vector<Hero*> list; //Hero[0], Hero[1], Hero[2]
+    // vector<Hero*> list; //Hero[0], Hero[1], Hero[2]
     // list.push_back(new Hero());
     // list.push_back(new Knight());
     // list.push_back(new Wizard());
