@@ -1,3 +1,4 @@
+-구체화-
 #include <iostream>
 #include <cstdlib>
 #include <memory>
