@@ -1,0 +1,29 @@
+#include <iostream>
+using namespace std;
+
+class Hores{
+public:
+    void run(){
+        cout << "달리다~!!" << endl;
+    }
+};
+
+class Wing{
+public:
+    void fly(){
+        cout << "날다~!!" << endl;
+    }
+};
+
+class Unicorn : public Hores, public Wing{
+};
+
+int main()
+{
+    Unicorn mary;
+
+    mary.run();
+    mary.fly();
+
+    return 0;
+}
