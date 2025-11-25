@@ -1,0 +1,23 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main()
+{
+    vector<int> v = {5,4,3,2,1}; //벡터 선언과 동시에 초기화
+
+    sort(v.begin(), v.end());
+    // vector<int>::iterator it;
+
+     for(it=v.begin(); it != v.end(); it++){
+         cout << *it << "\t";
+     }
+     cout << endl;
+    //for(int i : v){
+    //    cout << i << "\t";
+    //}
+    //cout << endl;
+
+    return 0;
+}
