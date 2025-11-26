@@ -1,0 +1,19 @@
+#include <iostream>
+using namespace std;
+
+class Circle{
+public:
+    void getArea(){
+        cout << "넓이 구하는 함수" << endl;
+    }
+};
+
+int main()
+{
+    Circle circle; //객체, stack에 존재
+    Circle &refc = circle; //refc = 레퍼런스, &refc->객체
+
+    refc.getArea();
+    
+    return 0;
+}
