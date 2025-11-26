@@ -17,7 +17,7 @@ int main() {
         //list.push_back(names);
 	}
     sort(sv.begin(), sv.end());
-    //list.sort();//오름차순,  list.sort(geater<string>())// 내림차순
+    //list.sort();//오름차순,  list.sort(greater<string>())// 내림차순
     string latter = sv.back();
 
     cout << "사전에서 가장 뒤에 나오는 문자열은 " << latter << endl;
