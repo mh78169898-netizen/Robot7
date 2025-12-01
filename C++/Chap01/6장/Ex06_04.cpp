@@ -2,7 +2,7 @@
 using namespace std;
 
 //원형 선언
-void f(char c = ' ', int line = 1);
+void f(char c = ' ', int line = 1);//int line:디폴트 매개변수
 
 //함수 구현
 void f(char c, int line){
