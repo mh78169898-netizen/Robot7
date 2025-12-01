@@ -13,6 +13,6 @@ void msg(int id, string s = ""){
 int main()
 {
     msg(5, "Good Moning");
-    msg(6);
+    msg(6); //디폴트 매개변수 --> 매개 변수를 2개 사용한 것!!!
     return 0;
 }
