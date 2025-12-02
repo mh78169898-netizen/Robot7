@@ -14,7 +14,7 @@ class Person
             sharedMoney++;
         }   
 };
-int Person::sharedMoney = 10000;
+int Person::sharedMoney = 10000;// 이렇게 외부 선언을 안해주면 오류가 발생
 
 int main()
 {
