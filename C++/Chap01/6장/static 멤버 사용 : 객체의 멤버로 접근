@@ -10,12 +10,13 @@ public:
     }
 
     static int sharedMoney;
+    //static inline int sharedMoney = 10; //c++17부터 inline을 사용해서 선언 가능
     static void addShared(int n){
         sharedMoney += n;
     }
 };
 
-int Person::sharedMoney = 10;
+int Person::sharedMoney = 10; // inline 사용시 불필요한 선언
  
 int main()
 {
