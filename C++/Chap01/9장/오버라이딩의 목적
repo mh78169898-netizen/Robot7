@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 using namespace std;
 
 class Shape{
@@ -7,7 +8,6 @@ public:
         cout << "도형을 그리다" << endl;
     }
 };
-
 class Circle : public Shape{
 public:
     void draw() override{
@@ -27,15 +27,36 @@ public:
     }
 };
 //전역함수
-void paint(Shape* p){
-    p->draw();
-    delete p; //동적할당된 메모리 해제
+//1번
+// void paint(Shape* p){
+//     p->draw();
+//     delete p; //동적할당된 메모리 해제
+// }
+//2번
+// void paint(unique_ptr<Shape> p){ //auto 사용 가능
+//     p->draw();
+// }
+//3번
+void paint(Shape& p){ //참조는 값을 전달받는다.
+     p.draw();
 }
-
 int main()
 {
-    paint(new Circle()); // Circle을 그린다.
-    paint(new Rect()); // Rect을 그린다.
-    paint(new Line()); // Line을 그린다.   
+    //1번
+    // paint(new Circle()); // Circle을 그린다.
+    // paint(new Rect()); // Rect을 그린다.
+    // paint(new Line()); // Line을 그린다.
+    //2번
+    // paint(make_unique<Circle>());
+    // paint(make_unique<Rect>());
+    // paint(make_unique<Line>());
+    //3번
+    Circle c;
+    Rect r;
+    Line l;
+    paint(c);
+    paint(r);
+    paint(l);
+
     return 0;
 }
