@@ -1,3 +1,4 @@
+-추상 클래스 구현 연습-
 #include <iostream>
 using namespace std;
 
