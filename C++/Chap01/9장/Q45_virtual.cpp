@@ -34,10 +34,10 @@ public:
 
 int main()
 {
-    vector<Hero*> hero_list;
-    unique_ptr<Hero> k = make_unique<Knight>();
-    unique_ptr<Hero> a = make_unique<Archer>();
-    unique_ptr<Hero> w = make_unique<Wizard>();
+    vector<Hero*> hero_list; //stack의 값 -- Hero객체들이 있는 주소들을 모은 꾸러미
+    unique_ptr<Hero> k = make_unique<Knight>(); //객체가 heap -- 코딩하는 곳은 stack
+    unique_ptr<Hero> a = make_unique<Archer>(); //객체가 heap -- 코딩하는 곳은 stack(a 변수의 값이 주소 Archer 객체가 있는 시작주소)
+    unique_ptr<Hero> w = make_unique<Wizard>(); //객체가 heap -- 코딩하는 곳은 stack(w변수는 값이 주소-> Wizard객체가 있는 시작 주소값)
     hero_list.push_back(k.get());
     hero_list.push_back(a.get());
     hero_list.push_back(w.get());
