@@ -1,0 +1,54 @@
+#include <iostream>
+#include <cstdlib>
+#include <string>
+using namespace std;
+
+class MagicStrategy{//추상 클래스
+public:
+    virtual void cast() = 0; //순수 가상 함수
+    virtual ~MagicStrategy() = default; // 가상 소멸자
+};
+class FireMagic : public MagicStrategy{
+public:
+    void cast() override{ //순수 가상 함수는 자식 클래스에 강제로 구현해야 한다.
+        cout << "해리가 화염 마법을 시전합니다." << endl;
+    }
+};
+class IceMagic : public MagicStrategy{
+public:
+    void cast() override{ //순수 가상 함수는 자식 클래스에 강제로 구현해야 한다.
+        cout << "해리가 얼음 마법을 시전합니다." << endl;
+    }
+};
+
+class Harry{
+private:
+    MagicStrategy* strategy = nullptr; //포인터로 선언
+public:
+    void setMagic(MagicStrategy* strategy){
+        this->strategy = strategy;
+    }
+    void Attack(){ //do Something
+        if (strategy == nullptr) {
+            cout << "현재 선택된 마법이 없습니다. 마법을 먼저 선택하세요." << endl;
+            return;
+        }    
+       strategy->cast(); //포인터로 가리키는 객체의 cast 호출
+    }
+   
+};
+
+int main()
+{
+    Harry hero; //해리 객체 생성
+    FireMagic fire; //화염 마법 객체 생성
+    IceMagic ice; //얼음 마법 객체 생성
+
+    hero.setMagic(&fire);
+    hero.Attack();
+
+    hero.setMagic(&ice);
+    hero.Attack();
+    
+    return 0;
+}
