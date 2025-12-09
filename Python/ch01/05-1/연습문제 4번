@@ -1,0 +1,19 @@
+1번:오류!!!(가변 매개변수는 가장 끝에 넣어야 한다)
+def function(*vel, velA,velB):
+    pass
+function(1,2,3,4,5)
+
+2번:작동
+def function(*vel, velA=10,velB=20):
+    pass
+function(1,2,3,4,5)
+
+3번:작동
+def function(velA,velB,*vel):
+    pass
+function(1,2,3,4,5)
+
+4번:작동
+def function(velA=10,velB=20,*vel):
+    pass
+function(1,2,3,4,5)
