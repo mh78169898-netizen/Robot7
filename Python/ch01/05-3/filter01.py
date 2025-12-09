@@ -3,7 +3,7 @@ num = [1,2,3,4,5]
 
 # def is_odd(x):
 #     return x % 2 != 0
-# result = filter(is_odd,num)
+# result = filter(is_odd,num) #람다식을 사용하면 함수를 작성할 필요가 없음
 
 result = filter(lambda x : x%2 !=0, num)
 
