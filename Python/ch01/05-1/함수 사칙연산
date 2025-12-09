@@ -1,0 +1,23 @@
+#4개 사칙연산 함수 만들기
+
+def plus (a,b):
+    return a + b
+def minus (a,b):
+    return a - b
+def mul (a,b):
+    return a * b
+def div (a, b):
+    return a / b
+
+a = int(input("a = "))
+b = int(input("b = "))
+
+sum = plus(a,b)
+sum2 = minus(a,b)
+sum3 = mul(a,b)
+sum4 = div(a,b)
+
+print(sum)
+print(sum2)
+print(sum3)
+print(sum4)
