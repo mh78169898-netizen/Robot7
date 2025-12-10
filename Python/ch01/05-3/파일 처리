@@ -1,0 +1,12 @@
+#파일을 만들고, 닫는 코드
+file = open('basic.txt', 'w')
+print(type(file))
+
+file.write('Hello Python Programming')
+
+file.close()
+
+#with키워드를 사용한 버전
+#with를 사용해서 close()를 호출
+with open('basic2.txt', 'w') as file2:
+    file2.write('오늘 저녁은 치킨이닭')
