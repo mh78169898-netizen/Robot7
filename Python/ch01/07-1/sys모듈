@@ -1,0 +1,8 @@
+import sys
+
+alist = sys.argv #매개변수를 list값으로 받아서 처리할 수 있다.
+
+print(sys.copyright)
+print(sys.version)
+
+sys.exit()
