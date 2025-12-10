@@ -4,7 +4,7 @@ def test():
     print('B 지점 통과')
     yield 2
     print('C 지점 통과')
-    yield 3
+    yield 3#이 부분을 주석처리하고 코드를 실행하면 오류 발생!
 
 output = test()
 #next()라는 함수 호출해 봅시다
