@@ -1,6 +1,6 @@
 import random
 
-#0.0과 1.0사이 float값을 리턴
+#random()0.0과 1.0사이 float값을 리턴
 print(random.random())
 
 #uniform(min, max) : 지정된 범위 사이의 float값 리턴
