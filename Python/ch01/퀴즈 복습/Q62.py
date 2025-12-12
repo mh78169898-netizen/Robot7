@@ -40,7 +40,7 @@ print(student.get_Id())
 print(student.get_name())
 print(student.get_pnum())
 
----기본 생성자처럼 사용하고 싶을때는 이렇게 수정---
+---기본 생성자처럼 사용하고 싶을때는 이렇게 수정, __str__ 함수 추가---
 #1.생성자 만들기, 
 # 맴버 private id:num, name:str, pnum:str,
 # 메소드  공부하다() : 공부를 합니다.
@@ -53,6 +53,9 @@ class Student:
 
     def study(self):
         print("공부를 합니다.")
+
+    def __str__(self):
+        return '{} / {} / {}\n'.format(self.__id, self.__name, self.__pnum)
 
     def get_Id(self):
         return self.__id
@@ -87,3 +90,4 @@ hun = Student()
 print(hun.get_Id())
 print(hun.get_name())
 print(hun.get_pnum())
+print(student)
