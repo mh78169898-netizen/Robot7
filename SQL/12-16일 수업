@@ -1,0 +1,429 @@
+-----12/16일 수업 내용들-----
+INSERT INTO Pets (ID, name, Animal)
+VALUES(1, '뽀삐', '강아지'), (2, '나나', '고양이'),(3, '푸우', '곰');
+
+SELECT * FROM Pets
+
+Q1.ID를 역순으로 출력하라
+SELECT * FROM Pets ORDER By ID DESC;
+
+Q2.이름 순으로 오름차순 출력하라
+SELECT * FROM Pets ORDER By Name ASC;
+
+Q3.sqlite에서 테이블의 데이터 구조를 보는 sql코드는?
+PRAGMA table_info(Pets);
+
+DELETE FROM Pets WHERE name = '후우';
+
+UPDATE Pets SET Name = '푸푸' WHERE id = 3;
+
+SELECT * From Pets
+
+DELETE From Pets
+DELETE From Pets WHERE ID >=0
+
+INSERT INTO Pets (ID, name, Animal)
+VALUES(1, 'Dr. Harris Bonkers', 'Rabbit'), (2, 'Moon', 'Dog'),(3, 'Ripley', 'cat'),(4,'Tom', 'cat');
+
+SELECT * from Pets;
+
+SELECT name as '이름', Birthday as '생일' From Person;
+
+SELECT id '아이디', name '이름', Birthday '생일' From Person; (as는 생략 가능)
+
+SELECT 
+	name as '이름',
+	Height as '키',
+	Weight as '몸무게',
+	round(Weight / (Height * Height*0.001), 2) as BMI
+	From Person;
+
+Q1.'적정 몸무게 컬럼을 만들어라'
+UPDATE Person SET Height = 163 WHERE id = 1;
+
+
+SELECT 
+	name as '이름',
+	Height as '키',
+	Weight as '몸무게',
+	round((Height - 110),2)  as '적정 몸무게'
+	From Person;
+
+SELECT
+	substr('201215-1123678', 3, 4) as '생일', 
+	substr('201215-1123678', 1, 2) as '태어난 년도'; 
+
+CREATE VIEW BirthdayView
+AS
+SELECT
+    Name,
+    Birthday bdate,
+    substr(Birthday, 1, 4) YYYY,
+    substr(Birthday, 6, 2) MM,
+    substr(Birthday, 9, 2) DD
+FROM Person;
+
+SELECT * FROM BirthdayView;
+
+DROP VIEW BirthdayView;
+
+SELECT
+    Name,
+    bdate,
+    MM,
+    CASE
+        WHEN MM = '01' THEN 'Jan.'
+        WHEN MM = '02' THEN 'Feb.'
+        WHEN MM = '03' THEN 'Mar.'
+        WHEN MM = '04' THEN 'Apr.'
+        WHEN MM = '05' THEN 'May.'
+        WHEN MM = '06' THEN 'Jun.'
+        WHEN MM = '07' THEN 'Jul.'      
+        WHEN MM = '08' THEN 'Aug.'
+        WHEN MM = '09' THEN 'Sep.'
+        WHEN MM = '10' THEN 'Oct.'
+        WHEN MM = '11' THEN 'Nov.'
+        WHEN MM = '12' THEN 'Dec.'
+    END Month
+FROM BirthdayView;
+
+Q: 12/16 11:30이 나오도록 sql을 작성하시오
+
+SELECT strftime('%m/%d %H:%M', 'now', 'localtime') 현재시간;
+
+Q:Person의 테이블에서 '만 나이'컬럼을 만들어 출력하시오
+
+SELECT
+	Birthday '생일',
+	strftime('%Y', 'now') - substr(Birthday, 1, 4) - (strftime('%m - %d', 'now') <  substr(Birthday, 6)) '만 나이'
+FROM Person
+/
+SELECT
+		name,
+		Birthday,
+		(CAST(strftime('%Y', 'now') as INTEGER) - 
+		CAST(substr(Birthday, 1,4) as INTEGER)) as '만 나이'
+FROM Person
+---집계 함수들 목록---
+SELECT count(*) FROM Person;
+
+SELECT min(Height) FROM Person;
+
+SELECT max(Height) FROM Person;
+
+SELECT avg(Height) FROM Person;
+
+SELECT sum(Height) FROM Person;
+
+SELECT count(Height),min(Height),max(Height),avg(Height),sum(Height) FROM Person; (5개 종합)
+-----------------------------------------------------------------------------------------------------------------
+--NVL(), NVL2
+SELECT Name, ifnull(Height, 0) FROM Person; (강제로 null을 박아넣어야 0이 나온다.)
+
+SELECT round(Height), count(*)
+FROM   Person
+GROUP  BY 1;
+
+SELECT round(Height), count(*)
+FROM   Person
+GROUP  BY round(Height)
+HAVING count(*) > 1;
+
+CREATE TABLE employees (
+    dept TEXT,
+    job TEXT,
+    salary INTEGER
+);
+
+--급여가 5000이상인 사람들의 부서별 평균 급여--
+SELECT dept, ROUND(AVG(salary),2)
+FROM employees
+GROUP By dept
+HAVING AVG(Salary) >= 5000;
+
+Q:직원이 3명 초과인 부서를 출력하시오
+SELECT dept, count(*)
+FROM employees
+GROUP By dept
+HAVING count(*) >3;
+
+Q:직무별 평균 급여가 6000이상인 직무를 출력하시오
+
+SELECT job, Round(AVG(salary), 2)
+FROM employees
+GROUP By job
+HAVING AVG(salary) >= 6000;
+
+
+DROP TABLE IF EXISTS student;
+DROP TABLE IF EXISTS course;
+
+CREATE TABLE student (
+    id    INTEGER PRIMARY KEY,
+    name  TEXT NOT NULL,
+    major TEXT NOT NULL,
+    year  INTEGER NOT NULL   -- 학년
+);
+
+CREATE TABLE course (
+    id       INTEGER PRIMARY KEY,
+    title    TEXT NOT NULL,
+    category TEXT NOT NULL,
+    credit   INTEGER NOT NULL
+);
+
+INSERT INTO student (id, name, major, year) VALUES
+(1, '김민수', '컴퓨터공학', 1),
+(2, '이서연', '컴퓨터공학', 2),
+(3, '박지훈', '컴퓨터공학', 3),
+(4, '최유진', '컴퓨터공학', 4),
+
+(5, '정우성', '전자공학', 1),
+(6, '한지민', '전자공학', 2),
+(7, '오세훈', '전자공학', 3),
+(8, '신하늘', '전자공학', 4),
+
+(9,  '장민지', '기계공학', 1),
+(10, '임도윤', '기계공학', 2),
+(11, '서준호', '기계공학', 3),
+(12, '윤채원', '기계공학', 4),
+
+(13, '강민혁', '산업공학', 1),
+(14, '문지아', '산업공학', 2),
+(15, '백승우', '산업공학', 3),
+(16, '조수빈', '산업공학', 4),
+
+(17, '홍준표', '컴퓨터공학', 2),
+(18, '김하린', '전자공학', 3),
+(19, '이도현', '기계공학', 4),
+(20, '박소연', '산업공학', 1);
+
+INSERT INTO course (id, title, category, credit) VALUES
+(1,  'C 프로그래밍',        '프로그래밍', 3),
+(2,  'C++ 객체지향',        '프로그래밍', 3),
+(3,  'Python 기초',         '프로그래밍', 3),
+(4,  '자료구조',            '프로그래밍', 3),
+
+(5,  '데이터베이스 기초',   'DB',         2),
+(6,  'SQL 활용',            'DB',         3),
+
+(7,  '임베디드 시스템',     '임베디드',   3),
+(8,  'ROS 입문',            '로봇',       3),
+
+(9,  '머신러닝 기초',       'AI',         3),
+(10, '산업공학 개론',       '이론',       2);
+
+
+ALTER TABLE student ADD COLUMN major_code TEXT;
+ALTER TABLE course  ADD COLUMN major_code TEXT;
+
+UPDATE student
+SET major_code =
+    CASE major
+        WHEN '컴퓨터공학' THEN 'CSE'
+        WHEN '전자공학'   THEN 'EEE'
+        WHEN '기계공학'   THEN 'ME'
+        WHEN '산업공학'   THEN 'IE'
+        ELSE 'GEN'
+END;
+
+
+UPDATE course
+SET major_code =
+    CASE
+        WHEN title IN ('C 프로그래밍','C++ 객체지향','Python 기초','자료구조') THEN 'CSE'
+        WHEN title IN ('임베디드 시스템') THEN 'EEE'
+        WHEN title IN ('ROS 입문') THEN 'ME'
+        WHEN title IN ('산업공학 개론') THEN 'IE'
+        WHEN title IN ('데이터베이스 기초','SQL 활용','머신러닝 기초') THEN 'CSE'
+        ELSE 'GEN'
+END;
+
+------------------------
+SELECT * FROM student;
+SELECT * FROM course;
+
+SELECT * FROM student s 
+JOIN course c
+[위 sql코드에서 join은 * 역할을 한다]
+
+SELECT * FROM student s 
+JOIN course c
+ON s.id = c.id;
+[id가 같은 10개만 추려서 출력한다]
+
+SELECT * FROM student;
+SELECT * FROM course;
+
+SELECT *
+FROM student s
+JOIN course c
+ON s.major_code = c.major_code;
+join = 2개의 다른 테이블에서 공통점을 모아서 새로운 테이블로 만드는 것
+
+SELECT s.name, s.major, s.major_code,c.title, c.category
+FROM student s JOIN course c
+ON s.major_code = c.major_code;
+
+SELECT major, title, category
+FROM student s JOIN course c
+on s.id = c.id
+WHERE category = '프로그래밍';
+
+SELECT major, title, category
+FROM student s JOIN course c
+on s.id = c.id
+WHERE major = '전자공학';
+
+---요약---
+-- SELECT * FROM student;
+-- SELECT * FROM course;
+-- SELECT * FROM enrollment;
+
+-- 기본 join
+SELECT s.name, c.title, e.grade
+FROM enrollment e
+JOIN student s ON e.student_id = s.id
+JOIN course  c ON e.course_id  = c.id;
+
+--속성 중 ID가 같은 값만 추출하는 JOIN
+SELECT *
+FROM student s
+JOIN course c
+on s.id = c.id;
+
+--컬럼명으로 조회
+SELECT  s.name, s.major, s.major_code, c.title, c.category
+FROM student s
+JOIN course c
+on s.id = c.id;
+
+--특정 학생의 수강 과목을 알고 싶다면? [학생이름], [과목이름],[성적] -장민지
+SELECT s.name, c.title, e.grade
+FROM enrollment e
+JOIN student s ON e.student_id = s.id
+JOIN course  c ON e.course_id  = c.id
+WHERE s.name = '장민지';
+
+-- 특정 과목을 수강한 학생의 이름과 성적을 알고 싶다면? [과목 이름] - C프로그래밍 / id = 1
+SELECT s.name, c.title, e.grade
+FROM enrollment e
+JOIN student s ON e.student_id = s.id
+JOIN course  c ON e.course_id  = c.id
+WHERE c.id = 1;
+
+--C++ 과목의 수강 학생 수는?
+SELECT count(*)
+FROM enrollment e
+JOIN student s ON e.student_id = s.id
+JOIN course  c ON e.course_id  = c.id
+WHERE c.id = 2;
+
+--학과별 수강 건수는? [전공별], [count]
+SELECT s.major, count(*) as '수강 건수'
+FROM enrollment e
+JOIN student s ON e.id = s.id
+GROUP BY s.major;
+
+CREATE TABLE enrollment (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id INTEGER NOT NULL,
+    course_id  INTEGER NOT NULL,
+    semester   TEXT NOT NULL,
+    grade      TEXT,
+
+    FOREIGN KEY (student_id) REFERENCES student(id),
+    FOREIGN KEY (course_id)  REFERENCES course(id),
+
+    UNIQUE(student_id, course_id, semester)
+);
+
+INSERT INTO enrollment (student_id, course_id, semester, grade) VALUES
+(1, 1, '2025-1', 'A0'),
+(1, 5, '2025-1', 'B+'),
+
+(2, 2, '2025-1', 'A+'),
+(2, 6, '2025-1', 'A0'),
+
+(3, 4, '2025-1', 'B0'),
+(3, 9, '2025-1', 'A0'),
+
+(4, 8, '2025-1', 'A0'),
+
+(5, 7, '2025-1', 'A0'),
+(6, 3, '2025-1', 'B+'),
+
+(7, 6, '2025-1', 'A0'),
+(8, 2, '2025-1', 'B+'),
+
+(9, 10,'2025-1', 'A0'),
+(10,5, '2025-1', 'B+'),
+
+(11,9, '2025-1', 'A+'),
+(12,4, '2025-1', 'B0'),
+
+(13,6, '2025-1', 'A0'),
+(14,1, '2025-1', 'B+'),
+
+(15,2, '2025-1', 'A0'),
+(16,8, '2025-1', 'A+'),
+
+(17,9, '2025-1', 'B0'),
+(18,7, '2025-1', 'A0'),
+
+(19,4, '2025-1', 'B+'),
+(20,10,'2025-1', 'A0');
+
+
+CREATE TABLE 노래 (
+  ID INTEGER NOT NULL PRIMARY KEY,
+  제목 TEXT NOT NULL
+);
+
+CREATE TABLE 음반 (
+  ID INTEGER NOT NULL PRIMARY KEY,
+  제목 TEXT NOT NULL,
+  연도 INTEGER
+);
+
+CREATE TABLE 수록곡 (
+  음반ID INTEGER NOT NULL,
+  노래ID INTEGER NOT NULL
+);
+
+INSERT INTO 노래 VALUES
+(1, '갸우뚱'),
+(2, 'Shuppy Shuppy'),
+(3, 'Control'),
+(4, '영러브'),
+(5, '한번만 안아줘'),
+(6, '반짝반짝'),
+(7, '기대해'),
+(8, 'I Don''t Mind'),
+(9, 'Easy go'),
+(10, '여자대통령');
+
+INSERT INTO 음반 VALUES
+(1, 'Girl''s Day Party #1', 2010),
+(2, 'Everyday', 2011),
+(3, 'Expectation', 2013),
+(4, '여자대통령', 2013);
+
+INSERT INTO 수록곡 VALUES 
+(1, 1),
+(1, 2),
+(1, 3),
+(2, 4),
+(2, 5),
+(2, 6),  -- Everyday - 반짝반짝
+(3, 7),
+(3, 8),
+(3, 9),
+(3, 6),  -- Expectation - 반짝반짝
+(3, 5),
+(4, 10);
+
+SELECT 음반.제목 앨범명, 음반.연도 발매년도, 노래.제목 곡명
+FROM 수록곡
+INNER JOIN 음반 ON 수록곡.음반ID = 음반.ID
+INNER JOIN 노래 ON 수록곡.노래ID = 노래.ID
