@@ -16,10 +16,12 @@ void show1()
 {
 	cv::Mat image1 = cv::imread("lenna.png");
 	cv::Mat image2 = cv::imread("dog.jpg");
-	if (image1.empty() or image2.empty()) {
+	cv::Mat image3;
+ 	if (image1.empty() or image2.empty()) {
 		std::cerr << "파일이 없습니다." << std::endl;
 		return;
 	}
+	image3 = image1.clone();
 	std::cout << "몇 차원? : " << image1.dims << std::endl;
 	std::cout << "열(column) ? : " << image1.cols << std::endl;
 	std::cout << "행(row) ? : " << image1.rows << std::endl;
@@ -30,6 +32,11 @@ void show1()
 	std::cout << "행(row) ? : " << image2.rows << std::endl;
 	cv::namedWindow("DOG");
 	cv::imshow("DOG", image2);
+	std::cout << "몇 차원? : " << image3.dims << std::endl;
+	std::cout << "열(column) ? : " << image3.cols << std::endl;
+	std::cout << "행(row) ? : " << image3.rows << std::endl;
+	cv::namedWindow("CLONE");
+	cv::imshow("CLONE", image3);
 	cv::waitKey();
 	cv::destroyAllWindows();
 }
