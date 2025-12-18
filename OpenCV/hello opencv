@@ -14,5 +14,6 @@ int main()
     cv::namedWindow("LENNA"); //창 이름
     cv::imshow("LENNA", img);
     cv::waitKey();
-    cv::destroyWindow("LENNA");
+    /*cv::destroyWindow("LENNA"); */
+    cv::destroyAllWindows();
 }
