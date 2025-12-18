@@ -5,7 +5,7 @@ extern void show1();
 
 int main()
 {
-    std::cout << "Open CV\n";
+    std::cout << "Open CV\n"; 
     show1();
 }
 
