@@ -1,0 +1,190 @@
+-웹캠 기반으로 만든 공 잡기 게임-
+#include "opencv2/opencv.hpp"
+#include <iostream>
+#include <ctime>
+#include <vector>
+#define NOMINMAX
+#include <Windows.h>
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
+
+//공 구조체 선언
+struct Ball {
+	cv::Point position; //x좌표값, y좌표값
+	int radius; //공의 반지름
+	bool activity;
+	int flipcode; //이미지 반전 방식
+	double angle; //이미지 회전 각도
+	cv::Scalar colorOffset; //색상 변조
+	int effectType; //피격시 시각 효과 종류(팽창, 침식)
+	int effectFrames; // 시각효과가 유지될 프레임 수
+	Ball() { //기본값으로 객체 초기화
+		//기본 물리, 상태 설정
+		this->position = cv::Point();
+		this->radius = 30;
+		this->activity = false;
+		//기본 외형 설정
+		this->flipcode = 1;
+		this->angle = 0;
+		this->colorOffset = cv::Scalar(0, 0, 0);
+		//초기 특수효과 설정
+		this->effectType = 0;
+		this->effectFrames = 0;
+	}
+};
+//공이 화면 밖으로 나가지 않게 조정하는 함수
+cv::Point getRandomPosition(int width, int height, int radius) {
+	int x = rand() % (width - 2 * radius) + radius;
+	int y = rand() % (height - 2 * radius) + radius;
+	return cv::Point(x, y);
+}
+void runProject() CV_NOEXCEPT
+{
+	//웹캠 존재 여부 확인 코드
+	srand((unsigned int)time(0));
+	cv::VideoCapture cap(0);
+	if (!cap.isOpened()) {
+		std::cerr << "웹캠이 없습니다.\n";
+		return;
+	}
+	//웹캠의 해상도
+	int width = cvRound(cap.get(cv::CAP_PROP_FRAME_WIDTH));
+	int height = cvRound(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
+	cv::Mat prev_gray; //이전 화면
+	Ball redball; //Ball 객체
+	redball.radius = 30; //공의 반지름을 30으로 초기화
+	redball.position = getRandomPosition(width, height, redball.radius);
+	int score = 0;
+	// 배경음악 재생코드
+	mciSendString(L"open \"C:\\Code\\OpenCV\\OpecCVProject\\F16 - The Grey Room _ Golden Palms.mp3\" type mpegvideo alias bgm", NULL, 0, NULL);
+	mciSendString(L"play bgm repeat", NULL, 0, NULL);
+	cv::Mat ball_img = cv::imread("test1.png", cv::IMREAD_UNCHANGED); // test1의 이미지를 공에 덧씌움
+	if (ball_img.empty() || ball_img.channels() < 4) {
+		std::cerr << "사진이 없거나 png형식이 아닙니다.\n";
+		return;
+	}
+	while (true)
+	{
+		cv::Mat frame, gray_frame, diff, thresh; //움직임이 감지된 영역을 이진화하여 저장할 변수들
+		cap >> frame;
+		if (frame.empty()) break;
+		cv::flip(frame, frame, 1); //반전
+		cv::cvtColor(frame, gray_frame, cv::COLOR_BGR2GRAY); //움직임 감지
+		cv::GaussianBlur(gray_frame, gray_frame, cv::Size(15, 15), 0); //가우시안 필터 적용
+		if (prev_gray.empty()) {
+			gray_frame.copyTo(prev_gray);
+			continue;
+		}
+		//명암과 객체 분리
+		cv::absdiff(prev_gray, gray_frame, diff); //차이 객체를 diff에 넣기
+		cv::threshold(diff, thresh, 25.0, 255.0, cv::THRESH_BINARY);
+		if (!redball.activity) { //ball의 외곽선 사각형 그림
+			int x1 = cv::max(0, redball.position.x - redball.radius);
+			int y1 = cv::max(0, redball.position.y - redball.radius);
+			int x2 = cv::min(width, redball.position.x + redball.radius);
+			int y2 = cv::min(height, redball.position.y + redball.radius);
+			cv::Rect ballRect(x1, y1, x2 - x1, y2 - y1);
+
+			cv::Mat roi = thresh(ballRect);
+			int movementPixels = cv::countNonZero(roi); //픽셀들의 움직임을 체크
+			int area = (redball.radius * 2) * (redball.radius * 2);
+			if (movementPixels > area * 0.1) {
+				std::cout << "터치" << ++score << "\r\n";
+				PlaySound(TEXT("Windows Ding.wav"), NULL, SND_FILENAME | SND_ASYNC);
+				// 새로운 효과를 주기 전에 이전 효과들을 기본값으로 리셋.
+				redball.radius = 30;                             // 기본 크기값
+				redball.flipcode = 1;                           // 기본 반전값(좌우)
+				redball.angle = 0;                              // 회전 없음
+				redball.colorOffset = cv::Scalar(0, 0, 0);      // 원본 색상
+				redball.effectFrames = 0;                       // 모핑 효과 끄기
+
+				// 위치는 항상 랜덤하게 변경
+				redball.position = getRandomPosition(width, height, redball.radius);
+
+				// --- [하나의 효과만 선택 적용] ---
+				int effectChoice = rand() % 5;
+				switch (effectChoice) {
+				case 0: // 크기만 변경
+					redball.radius = rand() % 41 + 20;
+					break;
+				case 1: // 반전만 변경
+				{
+					int flips[] = { 0, 1, -1 };
+					redball.flipcode = flips[rand() % 3];
+				}
+				break;
+				case 2: // 회전만 변경
+					redball.angle = rand() % 360;
+					break;
+				case 3: // 색상만 변경
+					redball.colorOffset = cv::Scalar(rand() % 100, rand() % 100, rand() % 100);
+					break;
+				case 4: // 모핑 효과만 적용
+					redball.effectType = (rand() % 2) + 1; //1(팽창),2(침식)효과를 랜덤하게 적용
+					redball.effectFrames = 15; //효과 유지 시간을 15프레임으로 설정
+					break;
+				}
+			}
+		}
+		int diameter = redball.radius * 2;
+		cv::Mat resized_ball;
+		// 공의 크기에 맞게 이미지 크기 조절
+		cv::resize(ball_img, resized_ball, cv::Size(diameter, diameter));
+		//위치 반전 부분
+		cv::flip(resized_ball, resized_ball, redball.flipcode);
+		//색 변환 부분
+		std::vector<cv::Mat> channels;
+		cv::split(resized_ball, channels);
+		for (int i = 0; i < 3; i++) {
+			channels[i] += redball.colorOffset[i];
+		}
+		cv::merge(channels, resized_ball);
+		if (redball.angle != 0) {
+			//공의 중심을 기준으로 회전 행렬 생성
+			cv::Mat rot = cv::getRotationMatrix2D(cv::Point2f(redball.radius, redball.radius), redball.angle, 1.0);
+			//회전 후 빈 공간은 투명(0,0,0,0)하게 유지
+			cv::warpAffine(resized_ball, resized_ball, rot, resized_ball.size(),
+				cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar(0, 0, 0, 0));
+		}
+		//모핑 부분
+		if (redball.effectFrames > 0) {
+			cv::Mat kernal = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(6, 6));
+			if (redball.effectType == 1) {
+				cv::dilate(resized_ball, resized_ball, kernal); //1(팽창)효과 발생 
+			}else if(redball.effectType == 2) {
+				cv::erode(resized_ball, resized_ball, kernal); //2(축소)효과 발생
+			}
+			redball.effectFrames--; //남은 효과 프레임수 감소
+		}
+		// 이미지를 그릴 시작점 계산 (원의 중심에서 반지름만큼 뺀 위치)
+		cv::Point topLeft(redball.position.x - redball.radius, redball.position.y - redball.radius);
+
+		// 화면 밖으로 나가는 경우를 대비한 안전 장치
+		if (topLeft.x >= 0 && topLeft.y >= 0 &&
+			topLeft.x + diameter <= frame.cols && topLeft.y + diameter <= frame.rows)
+		{
+			cv::Mat bgr[4];
+			cv::split(resized_ball, bgr); // 채널 분리 (B, G, R, Alpha)
+
+			cv::Mat foreground;
+			cv::Mat channels[] = { bgr[0], bgr[1], bgr[2] };
+			cv::merge(channels, 3, foreground); // BGR만 합침
+
+			cv::Mat alphaMask = bgr[3]; // 4번째 채널(투명도)을 마스크로 사용
+
+			// frame의 특정 영역(roi)에 마스크를 이용해 공 이미지 복사
+			cv::Mat roi = frame(cv::Rect(topLeft.x, topLeft.y, diameter, diameter));
+			foreground.copyTo(roi, alphaMask);
+		}
+		cv::putText(frame, "Score : " + std::to_string(score), cv::Point(20, 30), 
+			cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2);
+		cv::imshow("GAME", frame);
+		gray_frame.copyTo(prev_gray); //화면을 계속 업데이트
+		if (cv::waitKey(10) == 27) break;
+	}
+	cap.release();
+	cv::destroyAllWindows();
+	// 배경음악 정지 후 닫기
+	mciSendString(L"stop bgm", NULL, 0, NULL);
+	mciSendString(L"close bgm", NULL, 0, NULL);
+}
