@@ -1,0 +1,83 @@
+# from http.cookiejar import offset_from_tz_string
+
+import cv2
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras.preprocessing import image
+# from MATPLOTLIB.Example2 import heights
+from keras.src.ops.image import gaussian_blur
+from tensorflow.keras.models import load_model
+
+# from ML.ExampleML import predict_image
+
+from cv2 import imwrite
+
+cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    print("웹캠을 열 수 없습니다.")
+    exit()
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        print("프레임을 가져올 수 없습니다.")
+        break
+    flip_frame = cv2.flip(frame, 1)
+    heights, width, _ = frame.shape
+    center_x, center_y = width // 2, heights // 2
+    roi = flip_frame[center_y - 150 :center_y + 150, center_x - 150 :center_x + 150]
+    cv2.rectangle(flip_frame, (center_x - 150, center_y - 150), (center_x + 150, center_y + 150), (0, 0, 255), 2)
+    cv2.imshow("Webcam", flip_frame)
+
+    #화면 캡쳐를 위한 키값 받기
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord("c") or key == ord("C"):
+      gray_image = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+      gray_image = np.flip(gray_image, 1)
+      cv2.imwrite("gray_image.png", gray_image)
+      gaussian_blur = cv2.GaussianBlur(gray_image, (5, 5), 3)
+
+      #이진화
+      _, otsu_thread = cv2.threshold(gaussian_blur, 20, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+      cv2.imshow("otsu_thread", otsu_thread)
+      kernel = np.ones((5, 5), np.uint8)
+      erosion = cv2.erode(otsu_thread, kernel, iterations=5)
+      cv2.imshow("erosion", erosion)
+      cv2.imwrite("digit_binary_image.png", erosion)
+      img = cv2.imread("digit_binary_image.png", cv2.IMREAD_UNCHANGED)
+      h,w = img.shape[:2]
+      crop_size = 280
+      cx, cy = w // 2, h // 2
+      half = crop_size // 2
+      x1, x2 = cx - half, cx + half
+      y1, y2 = cy - half, cy + half
+
+      #경계면 설정
+      x1 = max(0, x1)
+      y1 = max(0, y1)
+      x2 = min(w, x2)
+      y2 = min(h, y2)
+      cropped_img = img[y1:y2, x1:x2]
+      cv2.imshow("cropped_img",cropped_img)
+
+      #이미지 반전
+      reversed_img = cv2.bitwise_not(cropped_img)
+      cv2.imshow("reversed_img", reversed_img)
+      cv2.imwrite("IMAGE_FOR_TEST.png", reversed_img)
+
+      #딥러닝 모델을 불러와서 판독시킴
+      load_model = keras.models.load_model("my_first_DNN_model.keras")
+      img = keras.utils.load_img("IMAGE_FOR_TEST.png", target_size=(28, 28), color_mode="grayscale")
+      img_array = keras.utils.img_to_array(img)
+      img_array =img_array.reshape((1,28,28))
+      predict_image = load_model.predict(img_array)
+      print(predict_image.argmax())
+
+      #판독 결과를 다른 화면으로 생성, 자막 표시
+      result = predict_image.argmax()
+      cv2.putText(frame, f"Result: {result}", (50,100),cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 4)
+      cv2.imshow(f"result window - {result}", frame)
+    if cv2.waitKey(1) == 27:
+        break
+cap.release()
+cv2.destroyAllWindows()
