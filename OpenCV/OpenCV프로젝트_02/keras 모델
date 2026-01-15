@@ -1,0 +1,20 @@
+model = keras.Sequential([
+    keras.layers.Input(shape=(28, 28)),
+    keras.layers.Flatten(),
+    keras.layers.Dense(1024, activation='relu'),
+    keras.layers.Dense(512, activation='relu'),
+    keras.layers.Dense(256, activation='relu'),
+    keras.layers.Dense(128, activation='relu'),
+    keras.layers.Dense(56, activation='relu'),
+    keras.layers.Dense(10, activation='softmax') #분류 종류가 3개 이상임을 암시
+])
+
+model.summary()
+
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+model.fit(train_images, train_labels, epochs=15)
+
+test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
+print('\n테스트 정확도:', test_acc)
+model.save("my_first_DNN_model.keras")
