@@ -3,3 +3,4 @@ import math #최적의 거리 계산할때 사용
 import config #좌석의 좌표값을 찾아서 불러오는데 사용
 
 model_b = YOLO('yolov8n.pt')
+
