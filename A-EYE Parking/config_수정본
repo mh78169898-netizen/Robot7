@@ -1,3 +1,4 @@
+---Team_Project.ipynb 파일---
 #사진을 찍고, 좌표를 드래그해서 추출한 다음 메인 코드에 집어 넣는 config 블록
 class config:
     PARKING_COORDINATES = {}
