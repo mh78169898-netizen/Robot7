@@ -6,24 +6,25 @@ class config:
 
 start_points = None
 drawing = False
+current_rect = None
 img = None
 img_raw = None
 
 def mouse_control(event, x, y, flags, param):
-    global start_points, drawing, img
+    global start_points, drawing, current_rect
 
     if event == cv2.EVENT_LBUTTONDOWN:
         drawing = True
         start_points = (x, y)
 
-    elif event == cv2.EVENT_MOUSEMOVE:
-        if drawing:
-            temp_img = img.copy()
-            cv2.rectangle(temp_img, start_points, (x, y), (0, 255, 0), 1)
-            cv2.imshow("Setup", temp_img)
+    elif event == cv2.EVENT_MOUSEMOVE and drawing:
+        current_rect = (start_points, (x, y))
 
     elif event == cv2.EVENT_LBUTTONUP:
+        global img
         drawing = False
+        current_rect = (start_points, (x, y))
+
         ix, iy = start_points #시작점
         ex, ey = x, y #끝점
 
@@ -36,10 +37,10 @@ def mouse_control(event, x, y, flags, param):
         #구역 번호생성 (딕셔너리 타입으로)
         seat_name = f"{len(config.PARKING_COORDINATES) + 1}번"
         config.PARKING_COORDINATES[seat_name] = (rx, ry, w, h)
-
-        #화면에 사긱형 그리기
-        cv2.rectangle(img, (rx,ry), (rx + w, ry + h), (0, 255, 0), 3)
-        cv2.imshow("Setup", img)
+        # img = img_raw.copy()
+        # for x,y,w,h in config.PARKING_COORDINATES.values():
+        #     cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        # cv2.imshow("Setup", img)
         print(f"등록좌표: {seat_name} ({rx}, {ry}, {w}, {h})")
         print(f"현재 저장된 총 구역 수: {len(config.PARKING_COORDINATES)}")
 
@@ -56,7 +57,7 @@ else:
     for name, (x, y, w, h) in config.PARKING_COORDINATES.items():
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
     cv2.namedWindow("Setup", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Setup", 800, 600)
+
     cv2.setMouseCallback("Setup", mouse_control)
     print("사용법:")
     print("- 드래그: 구역 설정")
@@ -64,8 +65,18 @@ else:
     print("- 'q' 키: 설정 완료 및 종료")
 
     while True:
-        if not drawing:
-            cv2.imshow("Setup", img)
+        img = img_raw.copy()
+        for name, (x, y, w, h) in config.PARKING_COORDINATES.items():
+            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        if drawing and current_rect:
+            (sx, sy), (ex, ey) = current_rect
+            rx = min(sx, ex)
+            ry = min(sy, ey)
+            rw = abs(ex - sx)
+            rh = abs(ey - sy)
+            cv2.rectangle(img, (rx, ry), (rx + rw, ry + rh), (0, 255, 0), 2)
+
+        cv2.imshow("Setup", img)
         key = cv2.waitKey(1) &0xFF
 
         #취소 기능
