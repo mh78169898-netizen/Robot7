@@ -2,6 +2,7 @@
 class config:
     PARKING_COORDINATES = []
     SAVE_FILE = 'parking_coordinates.pkl'
+    ENTRANCE_CODE = (100,60) #입구 좌표(임시)
 
 start_points = None
 drawing = False
