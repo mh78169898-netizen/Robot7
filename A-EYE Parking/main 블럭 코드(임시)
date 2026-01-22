@@ -1,3 +1,4 @@
+---Team_Project.ipynb 파일---
 #main 블록
 #Qt에서 만든 UI파일을 연결
 # from_class = uic.loadUiType("parking.ui")[0] #"" = 만든 .ui 파일 이름부분
