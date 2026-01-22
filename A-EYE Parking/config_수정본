@@ -1,0 +1,64 @@
+#사진을 찍고, 좌표를 드래그해서 추출한 다음 메인 코드에 집어 넣는 config 블록
+class config:
+    PARKING_COORDINATES = []
+
+start_points = None
+drawing = False
+
+def mouse_control(event, x, y, flags, param):
+    global start_points, drawing, img
+    if event == cv2.EVENT_LBUTTONDOWN:
+        drawing = True
+        start_points = (x, y)
+        print(f"시작좌표 : {start_points}")
+    elif event == cv2.EVENT_LBUTTONUP:
+        drawing = False
+        ix, iy = start_points #시작점
+        ex, ey = x, y #끝점
+
+        #x,y,w,h,계산 부분
+        w = abs(ex - ix)
+        h = abs(ey - iy)
+        rx = min(ix, ex)
+        ry = min(iy, ey)
+
+        config.PARKING_COORDINATES.append((rx, ry, w, h))
+        print(f"등록좌표: ({rx}, {ry}, {w}, {h})")
+
+        #화면에 사긱형 그리기
+        cv2.rectangle(img, (rx, ry), (rx + w, ry + h), (0, 255, 0), 2)
+        cv2.imshow("Setup", img)
+if not config.PARKING_COORDINATES:
+        img = cv2.imread('park_image.jpg')
+        if img is None:
+            print("이미지가 없습니다.")
+        else:
+            img_copy = img.copy()
+            cv2.namedWindow("Setup", cv2.WINDOW_NORMAL)
+            cv2.resizeWindow("Setup", 400, 400)
+            cv2.setMouseCallback("Setup", mouse_control)
+            print("사용법:")
+            print("- 드래그: 구역 설정")
+            print("- 'z' 키: 마지막 구역 취소(Undo)")
+            print("- 'q' 키: 설정 완료 및 종료")
+
+            while True:
+                cv2.imshow("Setup", img)
+                key = cv2.waitKey(1) &0xFF
+
+                #취소 기능
+                if key == ord('z'):
+                    if len(config.PARKING_COORDINATES) > 0:
+                        config.PARKING_COORDINATES.pop()
+                        #화면 초기화
+                        img = img_copy.copy()
+                        for(x,y,w,h) in config.PARKING_COORDINATES:
+                            cv2.rectangle(img, (x,y), (x+w, y+h), (0, 255, 0), 2)
+                        print(f"취소되었습니다.")
+                    else:
+                        print("취소할 구역이 없습니다.")
+
+                #종료
+                elif key == ord('q'):
+                    break
+            cv2.destroyAllWindows()
