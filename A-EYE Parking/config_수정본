@@ -1,9 +1,12 @@
 #사진을 찍고, 좌표를 드래그해서 추출한 다음 메인 코드에 집어 넣는 config 블록
 class config:
     PARKING_COORDINATES = []
+    SAVE_FILE = 'parking_coordinates.pkl'
 
 start_points = None
 drawing = False
+img = None
+img_copy = None
 
 def mouse_control(event, x, y, flags, param):
     global start_points, drawing, img
@@ -28,7 +31,10 @@ def mouse_control(event, x, y, flags, param):
         #화면에 사긱형 그리기
         cv2.rectangle(img, (rx, ry), (rx + w, ry + h), (0, 255, 0), 2)
         cv2.imshow("Setup", img)
-if not config.PARKING_COORDINATES:
+if os.path.exists(config.SAVE_FILE):
+    with open(config.SAVE_FILE, 'rb') as f:
+        config.PARKING_COORDINATES = pickle.load(f)
+        print(f"시스템: '{config.SAVE_FILE}' 파일에서 {len(config.PARKING_COORDINATES)}개의 좌표를 불러왔습니다.")
         img = cv2.imread('park_image.jpg')
         if img is None:
             print("이미지가 없습니다.")
