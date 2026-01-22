@@ -1,9 +1,11 @@
+---Team_Project.ipynb 파일---
 #헤더 설정 블록
 import cv2
 import sys
 import numpy as np
 import pickle
 import pytesseract
+from sympy.physics.units import current
 from ultralytics import YOLO
 import sqlite3
 import math #최적의 거리 계산할때 사용
