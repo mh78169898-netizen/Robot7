@@ -44,10 +44,10 @@ def step1_ocr_process(roi_frame):
 # 데이터베이스에서 차량 소유주 정보 조회
 def step2_db_check(vehicle_no):
     try:
-        conn = sqlite3.connect('parking_system.db')
+        conn = sqlite3.connect(r'C:\Users\User\robotics\databases\parking.db')
         cur = conn.cursor()
         # 번호판(vehicle_no)을 기준으로 이름, 동, 선호 구역 조회
-        cur.execute("SELECT name, building_no, assigned_seat FROM car_info WHERE vehicle_no=?", (vehicle_no,))
+        cur.execute("SELECT name, building_no FROM car_info WHERE vehicle_no=?", (vehicle_no,))
         row = cur.fetchone()
         conn.close()
 
@@ -55,8 +55,8 @@ def step2_db_check(vehicle_no):
             # 다음 단계(Step 3, 4)에서 사용할 수 있게 딕셔너리로 묶어서 반환
             return {
                 'name': row[0],
-                'dong': row[1],
-                'my_area': row[2]  # 이 정보가 4단계에서 '우리 동 근처'를 찾는 기준이 됨
+                # 'dong': row[1],
+                'my_area': row[1]  # 이 정보가 4단계에서 '우리 동 근처'를 찾는 기준이 됨
             }
         return None
     except Exception as e:
@@ -65,9 +65,9 @@ def step2_db_check(vehicle_no):
 # [Bridge] 2번에서 가져온 유저 정보와 3번의 YOLO 상태를 결합하는 함수
 def bridge_user_to_system(user_data, seat_status):
     if user_data is None:
-        return False, "외부 차량입니다. 경비실로 연결합니다."
+        return {"ok": False, "message": "외부 차량 입니다...", "user": None, "seat_status": None}
+    return {"ok": True, "message": None, "user": user_data, "seat_status": seat_status}
 
-    return True, user_data, seat_status
 #3번 함수
 def step3_yolo_analysis(full_frame, model_b):
         """
@@ -96,7 +96,7 @@ def step4_logic_dicision(seat_status):
     empty_seats = [name for name, status in seat_status.items() if status == "Empty"] #현재 비어있는 좌석 목록 추출
     #모든 자리가 찬 경우 경고 표시
     if not empty_seats:
-        return "빈 좌석이 없습니다!!!"
+        return None
 
     #기준점 설정, 아마도 사진 기준 오른쪽 아래 좌표를 기준점(입구)로 할 거 같음
     config.ENTRANCE_CODE = (100,60) #config 에서 지정한 입구 좌표
