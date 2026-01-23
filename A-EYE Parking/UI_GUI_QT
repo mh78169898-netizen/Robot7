@@ -1,1 +1,39 @@
+from PyQt5.QtWidgets import QWidget, QPushButton, QLabel
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QPixmap
+from pathlib import Path
 
+class MainWindow(QWidget):
+    button_clicked = pyqtSignal()
+
+    def __init__(self):
+        super().__init__()
+        self._base_path = Path(__file__).parent
+        self._init_ui()
+
+    def _init_ui(self):
+        self.setWindowTitle("Main GUI")
+        self.setFixedSize(400, 400)
+        self._set_background()
+        self._set_button()
+
+    def _set_background(self):
+        label = QLabel(self)
+        pimap = QPixmap(str(self._base_path / 'Images' / 'map.png'))
+        label.setPixmap(pimap)
+        label.setScaledContents(True)
+        label.setGeometry(0,0,400,400)
+
+    def _set_button(self):
+        btn = QPushButton(self)
+        btn.setGeometry(150, 200, 100, 50)
+
+        btn.setStyleSheet(f"""
+            QPushButton {{
+                border-image: url({self._base_path / 'Images' / '클릭_off.png'});
+            }}
+            QPushButton:hover{{
+                border-image: url({self._base_path / 'Images' / '클릭_off.png'});
+                }}
+            """)
+        btn.clicked.connect(self.button_clicked.emit)
