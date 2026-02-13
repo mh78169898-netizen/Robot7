@@ -1,0 +1,189 @@
+--turtlebot_move.ui--
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>668</width>
+    <height>529</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QPushButton" name="btn_tri">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>70</y>
+     <width>111</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>삼각형</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_rect">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>70</y>
+     <width>111</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>사각형</string>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="listWidget">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>80</y>
+     <width>256</width>
+     <height>411</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_exit">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>440</y>
+     <width>181</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>종료</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_penta">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>200</y>
+     <width>111</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>오각형</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_hexa">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>200</y>
+     <width>111</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>육각형</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_star">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>330</y>
+     <width>111</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>별모양</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_stop">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>330</y>
+     <width>111</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>긴급정지</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
+
+
+--turtlebot_move_ui.py--
+# -*- coding: utf-8 -*-
+
+################################################################################
+## Form generated from reading UI file 'turtlebot_move.ui'
+##
+## Created by: Qt User Interface Compiler version 6.10.2
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
+
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QApplication, QListWidget, QListWidgetItem, QPushButton,
+    QSizePolicy, QWidget)
+
+class Ui_Form(object):
+    def setupUi(self, Form):
+        if not Form.objectName():
+            Form.setObjectName(u"Form")
+        Form.resize(668, 529)
+        self.btn_tri = QPushButton(Form)
+        self.btn_tri.setObjectName(u"btn_tri")
+        self.btn_tri.setGeometry(QRect(20, 70, 111, 91))
+        self.btn_rect = QPushButton(Form)
+        self.btn_rect.setObjectName(u"btn_rect")
+        self.btn_rect.setGeometry(QRect(190, 70, 111, 91))
+        self.listWidget = QListWidget(Form)
+        self.listWidget.setObjectName(u"listWidget")
+        self.listWidget.setGeometry(QRect(380, 80, 256, 411))
+        self.btn_exit = QPushButton(Form)
+        self.btn_exit.setObjectName(u"btn_exit")
+        self.btn_exit.setGeometry(QRect(70, 440, 181, 51))
+        self.btn_penta = QPushButton(Form)
+        self.btn_penta.setObjectName(u"btn_penta")
+        self.btn_penta.setGeometry(QRect(20, 200, 111, 91))
+        self.btn_hexa = QPushButton(Form)
+        self.btn_hexa.setObjectName(u"btn_hexa")
+        self.btn_hexa.setGeometry(QRect(190, 200, 111, 91))
+        self.btn_star = QPushButton(Form)
+        self.btn_star.setObjectName(u"btn_star")
+        self.btn_star.setGeometry(QRect(20, 330, 111, 91))
+        self.btn_stop = QPushButton(Form)
+        self.btn_stop.setObjectName(u"btn_stop")
+        self.btn_stop.setGeometry(QRect(190, 330, 111, 91))
+
+        self.retranslateUi(Form)
+
+        QMetaObject.connectSlotsByName(Form)
+    # setupUi
+
+    def retranslateUi(self, Form):
+        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+        self.btn_tri.setText(QCoreApplication.translate("Form", u"\uc0bc\uac01\ud615", None))
+        self.btn_rect.setText(QCoreApplication.translate("Form", u"\uc0ac\uac01\ud615", None))
+        self.btn_exit.setText(QCoreApplication.translate("Form", u"\uc885\ub8cc", None))
+        self.btn_penta.setText(QCoreApplication.translate("Form", u"\uc624\uac01\ud615", None))
+        self.btn_hexa.setText(QCoreApplication.translate("Form", u"\uc721\uac01\ud615", None))
+        self.btn_star.setText(QCoreApplication.translate("Form", u"\ubcc4\ubaa8\uc591", None))
+        self.btn_stop.setText(QCoreApplication.translate("Form", u"\uae34\uae09\uc815\uc9c0", None))
+    # retranslateUi
