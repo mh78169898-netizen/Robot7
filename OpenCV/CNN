@@ -81,7 +81,7 @@ model.summary()
 
 model.compile(optimizer='adam',loss='categorical_crossentropy',metrics=['categorical_accuracy'])
 
-model.fit(X, Y, epochs=100)
+model.fit(X, Y, epochs=50)
 
 model.save('My_CNN.keras')
 
