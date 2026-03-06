@@ -39,6 +39,8 @@ class RobotDashboard(QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self) # UI 위젯 초기화
+        # --- [추가] 마지막으로 위치 로그를 남긴 시간 저장 ---
+        self.last_log_time = 0
 
         # --- [초기 설정 변수] ---
         self.is_emergency = False
@@ -127,6 +129,14 @@ class RobotDashboard(QWidget, Ui_Form):
         painter.end()
 
         self.map.setPixmap(QPixmap.fromImage(canvas))
+
+        # 5초마다 로봇 위치 로그 찍기
+        current_time = time.time()
+        if current_time - self.last_log_time >= 5.0:
+            log_msg = f"로봇 현재 위치: x={rx:.2f}, y={ry:.2f}"
+            self.logWidget.addItem(log_msg)
+            self.logWidget.scrollToBottom()
+            self.last_log_time = current_time
 
     # --- [기능 3: 긴급 정지 제어] ---
     def handle_emergency_stop(self):
