@@ -213,12 +213,6 @@ class RosWorker(QThread):
             # 1. 가상 배터리 데이터 (80%~100% 사이 랜덤)
             fake_battery = random.uniform(10, 100)
             self.battery_signal.emit(fake_battery)
-
-            # 2. 가상 로봇 위치 데이터 (원을 그리며 이동)
-            # t = time.time()
-            # rx, ry = math.cos(t) * 2, math.sin(t) * 2
-            # self.pose_signal.emit(rx, ry)
-
             self.msleep(1000) # 1초 간격 업데이트
 
 # ---------------------------------------------------------
@@ -365,24 +359,39 @@ class RobotDashboard(QWidget, Ui_Form):
 
     # --- [기능 3: 긴급 정지 제어] ---
     def handle_emergency_stop(self):
-        self.is_emergency = True
-        self.v, self.w = 0.0, 0.0
-        self.move_timer.stop()
-        self.eventWidget.addItem("[EMERGENCY] 긴급 정지 작동!")
-        self.set_buttons_enabled(False)
+        self.is_emergency =  not self.is_emergency
+
+        if self.is_emergency:
+          self.v, self.w = 0.0, 0.0
+          self.move_timer.stop()
+          self.eventWidget.addItem("[EMERGENCY] 긴급 정지 작동!")
+          self.set_buttons_enabled(False)
+          self.stop.setText("정지 해제")
+        else:
+            self.set_buttons_enabled(True)
+            self.eventWidget.addItem("긴급 정지 해제")
+            self.stop.setText("긴급 정지")
 
     # --- [기능 4: 자동 운행 및 복구] ---
     def handle_automove(self):
         if self.is_emergency:
-            self.is_emergency = False
-            self.set_buttons_enabled(True)
             self.eventWidget.addItem("긴급 정지 해제: 운행 재개")
+            return
+
+        self.current_mode = "AUTO"
+        self.logWidget.addItem("모드 전환: 자동 운행 시작")
+        # 여기에 실제 ROS 자동항법 시작 명령 추가
 
     def set_buttons_enabled(self, status):
         self.go.setEnabled(status)
         self.back.setEnabled(status)
         self.left.setEnabled(status)
         self.right.setEnabled(status)
+
+        if not status:
+            self.stop.setStyleSheet("background-color: #e74c3c; color: white; font-weight: bold;")
+        else:
+            self.stop.setStyleSheet("")
 
     def send_stop_cmd(self):
         pass
@@ -394,3 +403,4 @@ if __name__ == '__main__':
     window = RobotDashboard()
     window.show()
     sys.exit(app.exec())
+
