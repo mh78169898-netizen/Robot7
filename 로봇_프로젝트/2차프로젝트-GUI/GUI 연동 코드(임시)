@@ -217,7 +217,7 @@ class RosWorker(QThread):
             # 2. 가상 로봇 위치 데이터 (원을 그리며 이동)
             # t = time.time()
             # rx, ry = math.cos(t) * 2, math.sin(t) * 2
-            self.pose_signal.emit(0.0, 0.0)
+            # self.pose_signal.emit(rx, ry)
 
             self.msleep(1000) # 1초 간격 업데이트
 
@@ -256,6 +256,7 @@ class RobotDashboard(QWidget, Ui_Form):
         self.worker.battery_signal.connect(self.update_battery)
         self.worker.pose_signal.connect(self.update_robot_pose)
         self.worker.start()
+        self.update_robot_pose(self.robot_x, self.robot_y)
 
         # --- [버튼 시그널 연결] ---
         #누르는 동안 작동, 떼면 0
