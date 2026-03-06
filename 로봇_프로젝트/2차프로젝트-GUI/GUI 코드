@@ -1,0 +1,269 @@
+-.ui 코드-
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>857</width>
+    <height>708</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QListWidget" name="logWidget">
+   <property name="geometry">
+    <rect>
+     <x>630</x>
+     <y>350</y>
+     <width>211</width>
+     <height>321</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="map">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>60</y>
+     <width>821</width>
+     <height>241</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>지도가 들어갈 곳</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="go">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>480</y>
+     <width>71</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>전진</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="stop">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>540</y>
+     <width>71</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>긴급 정지</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="right">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>540</y>
+     <width>71</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>우향</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="left">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>540</y>
+     <width>71</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>좌향</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="back">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>610</y>
+     <width>71</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>후진</string>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="eventWidget">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>350</y>
+     <width>211</width>
+     <height>321</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>320</y>
+     <width>101</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>이벤트 창</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>710</x>
+     <y>320</y>
+     <width>101</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>로그 창</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="automove">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>540</y>
+     <width>81</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>자동 운행</string>
+   </property>
+  </widget>
+  <widget class="QProgressBar" name="battery_bar">
+   <property name="geometry">
+    <rect>
+     <x>710</x>
+     <y>20</y>
+     <width>118</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="value">
+    <number>24</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="battery">
+   <property name="geometry">
+    <rect>
+     <x>630</x>
+     <y>20</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>배터리 잔량</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
+
+-.ui.py코드-
+# -*- coding: utf-8 -*-
+
+################################################################################
+## Form generated from reading UI file 'teamtest.ui'
+##
+## Created by: Qt User Interface Compiler version 6.10.2
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
+
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QApplication, QLabel, QListWidget, QListWidgetItem,
+    QProgressBar, QPushButton, QSizePolicy, QWidget)
+
+class Ui_Form(object):
+    def setupUi(self, Form):
+        if not Form.objectName():
+            Form.setObjectName(u"Form")
+        Form.resize(857, 708)
+        self.logWidget = QListWidget(Form)
+        self.logWidget.setObjectName(u"logWidget")
+        self.logWidget.setGeometry(QRect(630, 350, 211, 321))
+        self.map = QLabel(Form)
+        self.map.setObjectName(u"map")
+        self.map.setGeometry(QRect(20, 60, 821, 241))
+        self.go = QPushButton(Form)
+        self.go.setObjectName(u"go")
+        self.go.setGeometry(QRect(90, 480, 71, 51))
+        self.stop = QPushButton(Form)
+        self.stop.setObjectName(u"stop")
+        self.stop.setGeometry(QRect(90, 540, 71, 61))
+        self.right = QPushButton(Form)
+        self.right.setObjectName(u"right")
+        self.right.setGeometry(QRect(170, 540, 71, 61))
+        self.left = QPushButton(Form)
+        self.left.setObjectName(u"left")
+        self.left.setGeometry(QRect(10, 540, 71, 61))
+        self.back = QPushButton(Form)
+        self.back.setObjectName(u"back")
+        self.back.setGeometry(QRect(90, 610, 71, 61))
+        self.eventWidget = QListWidget(Form)
+        self.eventWidget.setObjectName(u"eventWidget")
+        self.eventWidget.setGeometry(QRect(400, 350, 211, 321))
+        self.label = QLabel(Form)
+        self.label.setObjectName(u"label")
+        self.label.setGeometry(QRect(470, 320, 101, 17))
+        self.label_2 = QLabel(Form)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setGeometry(QRect(710, 320, 101, 17))
+        self.automove = QPushButton(Form)
+        self.automove.setObjectName(u"automove")
+        self.automove.setGeometry(QRect(260, 540, 81, 61))
+        self.battery_bar = QProgressBar(Form)
+        self.battery_bar.setObjectName(u"battery_bar")
+        self.battery_bar.setGeometry(QRect(710, 20, 118, 23))
+        self.battery_bar.setValue(24)
+        self.battery = QLabel(Form)
+        self.battery.setObjectName(u"battery")
+        self.battery.setGeometry(QRect(630, 20, 71, 21))
+
+        self.retranslateUi(Form)
+
+        QMetaObject.connectSlotsByName(Form)
+    # setupUi
+
+    def retranslateUi(self, Form):
+        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+        self.map.setText(QCoreApplication.translate("Form", u"\uc9c0\ub3c4\uac00 \ub4e4\uc5b4\uac08 \uacf3", None))
+        self.go.setText(QCoreApplication.translate("Form", u"\uc804\uc9c4", None))
+        self.stop.setText(QCoreApplication.translate("Form", u"\uae34\uae09 \uc815\uc9c0", None))
+        self.right.setText(QCoreApplication.translate("Form", u"\uc6b0\ud5a5", None))
+        self.left.setText(QCoreApplication.translate("Form", u"\uc88c\ud5a5", None))
+        self.back.setText(QCoreApplication.translate("Form", u"\ud6c4\uc9c4", None))
+        self.label.setText(QCoreApplication.translate("Form", u"\uc774\ubca4\ud2b8 \ucc3d", None))
+        self.label_2.setText(QCoreApplication.translate("Form", u"\ub85c\uadf8 \ucc3d", None))
+        self.automove.setText(QCoreApplication.translate("Form", u"\uc790\ub3d9 \uc6b4\ud589", None))
+        self.battery.setText(QCoreApplication.translate("Form", u"\ubc30\ud130\ub9ac \uc794\ub7c9", None))
+    # retranslateUi
