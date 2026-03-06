@@ -1,4 +1,4 @@
-## log,event, 지도, 방향키 명령 등 코드
+# log,event, 지도, 방향키 명령 등 코드
 import sys
 import math
 import time
