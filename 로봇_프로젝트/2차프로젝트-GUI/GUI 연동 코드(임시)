@@ -76,13 +76,31 @@ class RobotDashboard(QWidget, Ui_Form):
     def update_battery(self, value):
         self.battery_bar.setValue(int(value))
 
-        # 잔량에 따른 색상 및 경고 처리
         if value < 20:
-            self.battery_bar.setStyleSheet("QProgressBar::chunk { background-color: #c0392b; }") # Red
-            if not any("배터리 부족" in self.eventWidget.item(i).text() for i in range(self.eventWidget.count())):
-                self.eventWidget.addItem(f"[경고] 배터리 부족: {int(value)}%")
+            # 빨간색 표시
+            self.battery_bar.setStyleSheet("QProgressBar::chunk { background-color: #c0392b; }")
+
+            # 리스트에 경고문이 없는 경우에만 추가 (중복 방지)
+            warning_text = "[경고] 배터리 부족: "
+            exists = False
+            for i in range(self.eventWidget.count()):
+                if warning_text in self.eventWidget.item(i).text():
+                    exists = True
+                    break
+
+            if not exists:
+                self.eventWidget.addItem(f"{warning_text} ({int(value)}%)")
+                self.eventWidget.scrollToBottom()
+
         else:
-            self.battery_bar.setStyleSheet("QProgressBar::chunk { background-color: #27ae60; }") # Green
+            # 20% 이상일 때: 초록색 표시
+            self.battery_bar.setStyleSheet("QProgressBar::chunk { background-color: #27ae60; }")
+
+            # [중요] 충전되어 20%가 넘으면 기존에 있던 "배터리 부족" 경고문을 모두 삭제
+            for i in range(self.eventWidget.count() - 1, -1, -1): # 뒤에서부터 확인하며 삭제
+                item = self.eventWidget.item(i)
+                if "[경고] 배터리 부족" in item.text():
+                    self.eventWidget.takeItem(i) # 해당 아이템 삭제
 
     # --- [기능 2: 지도 및 로봇 위치 표시] ---
     @Slot(float, float)
