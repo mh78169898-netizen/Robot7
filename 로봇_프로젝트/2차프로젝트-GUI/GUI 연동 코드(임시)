@@ -336,6 +336,7 @@ if __name__ == '__main__':
     window = RobotDashboard()
     window.show()
     sys.exit(app.exec())
+---------------------------------------실제 터틀봇과의 연동 버전----------------------------------------------------------
 import sys
 import math
 import time
@@ -343,14 +344,21 @@ import random
 import os #추가한 부분
 import cv2 #카메라 영상을 위해 추가
 import numpy as np #영상 데이터 처리
-import math #로봇 방향 표시를 위해 추가
+from cv_bridge import CvBridge #OpenCV에서 카메라 영상 처리를 위해 필요
+# ROS2 관련 추가
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import BatteryState, Image
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import Twist
+
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 
 # 1. UI 파일 (teamtest.py로 변환되었다고 가정)
 # 만약 파일명이 다르면 그에 맞게 수정하세요.
-from teamtest_ui import Ui_Form
+from my_team_test2.teamtest_ui import Ui_Form
 
 # ---------------------------------------------------------
 # [1] Worker 쓰레드: ROS 데이터를 수신하여 GUI로 전달
@@ -358,44 +366,72 @@ from teamtest_ui import Ui_Form
 class RosWorker(QThread):
     battery_signal = Signal(float)
     pose_signal = Signal(float, float)
+    camera_signal = Signal(QImage) #카메라 신호 추가
+
+    def __init__(self):
+        super().__init__()
+        if not rclpy.ok():rclpy.init()
+        self.node = Node('gui_subscriber_node')
+        self.bridge = CvBridge()
+        self.battery_sub = self.node.create_subscription(BatteryState,'/battery_state', self.battery_callback,10) #배터리 구독(실제 터틀봇)
+        self.odom_sub = self.node.create_subscription(Odometry, '/odom', self.odom_callback, 10) #위치 구독 코드(실제 터틀봇)
+        self.image_sub = self.node.create_subscription(Image, '/camera/image_raw', self.image_callback, 10)
+
+        self.cmd_vel_pub = self.node.create_publisher(Twist, 'cmd/vel', 10) #발행자 설정
+
+    def battery_callback(self, msg):
+        """실제 배터리 데이터가 들어오면 실행되는 함수"""
+        battery_percent = msg.percentage
+        self.battery_signal.emit(battery_percent)
+
+    def odom_callback(self, msg):
+        """실제 로봇 위치 데이터가 들어오면 실행되는 함수"""
+        curr_x = msg.pose.pose.position.x
+        curr_y = msg.pose.pose.position.y
+        self.pose_signal.emit(curr_x, curr_y)
+
+    def image_callback(self, msg):
+        try:
+            cv_img = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            rgb_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
+            h,w,ch = rgb_img.shape
+            bytes_per_line = ch * w
+            qt_image = QImage(rgb_img.data,w,h,bytes_per_line,QImage.Format_RGB888)
+            self.camera_signal.emit(qt_image.copy())
+        except Exception as e:
+            print(f"이미지 변환 실패: {e}")
+
+    def publish_twist(self, linear_v, anguler_w):
+        msg = Twist()
+        msg.linear.x = float(linear_v)
+        msg.angular.z = float(anguler_w)
+        self.cmd_vel_pub.publish(msg)
 
     def run(self):
-        """가제보나 실제 로봇이 없어도 테스트 가능하도록 가상 데이터 생성"""
-        while True:
-            # 1. 가상 배터리 데이터 (80%~100% 사이 랜덤)
-            fake_battery = random.uniform(10, 100)
-            self.battery_signal.emit(fake_battery)
-            self.msleep(1000) # 1초 간격 업데이트
+        """쓰레드가 시작되면 ROS 2 이벤트를 계속 체크합니다."""
+        while rclpy.ok():
+            # 0.1초 간격으로 새로운 토픽 데이터가 있는지 검사
+            rclpy.spin_once(self.node, timeout_sec=0.1)
 
-# ---------------------------------------------------------
-# [1-2] Camera Worker 쓰레드: 카메라 영상을 수신하여 GUI로 전달
-# ---------------------------------------------------------
-class CameraWorker(QThread):
-    frame_signal = Signal(QImage)
-
-    def run(self):
-        cap = cv2.VideoCapture(0) #이 부분은 나중에 ROS2 토픽 수신으로 변경해야 함
-        while True:
-            ret, frame = cap.read()
-            if ret:
-                rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                h, w, ch = rgb_image.shape
-                bytes_per_line = ch * w
-                qt_image = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
-                scaled_image = qt_image.scaled(400, 300, Qt.KeepAspectRatio)
-                self.frame_signal.emit(scaled_image)
-            self.msleep(30)
-
+    def stop(self):
+        self.node.destroy_node()
+        rclpy.shutdown()
 # ---------------------------------------------------------
 # [2] 메인 GUI 클래스: 모든 기능 통합
 # ---------------------------------------------------------
+EVENT_CODES = {
+    "G001": {"event": "SYSTEM_START",   "level": "INFO",     "desc": "시스템 시작"},
+    "G002": {"event": "EMERGENCY_STOP", "level": "CRITICAL", "desc": "긴급 정지 작동"},
+    "E004": {"event": "CONNECTION_LOST", "level": "CRITICAL", "desc": "로봇 연결 끊김"},
+    "G003": {"event": "SYSTEM_EXIT",    "level": "INFO",     "desc": "프로그램 종료"}
+}
 class RobotDashboard(QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self) # UI 위젯 초기화
 
         # --- [초기 설정 변수] ---
-        self.log_file_name = "robot_action_log.txt" #추가한 부분
+        # self.log_file_name = "robot_action_log.txt" #추가한 부분
         self.last_log_time = 0
         self.is_emergency = False
         self.current_mode = "IDLE"
@@ -432,35 +468,81 @@ class RobotDashboard(QWidget, Ui_Form):
         self.worker = RosWorker()
         self.worker.battery_signal.connect(self.update_battery)
         self.worker.pose_signal.connect(self.update_robot_pose)
+        self.worker.camera_signal.connect(self.update_camera_view)
         self.worker.start()
         self.update_robot_pose(self.robot_x, self.robot_y)
 
-        # ---[카메라 설정 및 시작]
-        self.camera_worker = CameraWorker()
-        self.camera_worker.frame_signal.connect(self.update_camera_view)
-        self.camera_worker.start()
+        self.init_button_signals() # --- [버튼 시그널 연결] ---
+        self.add_smart_log("G001", is_event=True) # [1] 시스템 시작 기록
 
-        # --- [버튼 시그널 연결] ---
         #누르는 동안 작동, 떼면 0
         # 방향 버튼 (Lambda 사용)
+    def init_button_signals(self):
         self.go.pressed.connect(lambda: self.set_velocity(0.5, 0.0))
         self.go.released.connect(self.stop_velocity)
-
         self.back.pressed.connect(lambda: self.set_velocity(-0.5, 0.0))
         self.back.released.connect(self.stop_velocity)
-
         self.left.pressed.connect(lambda: self.set_velocity(0.0, 1.0))
         self.left.released.connect(self.stop_velocity)
-
         self.right.pressed.connect(lambda: self.set_velocity(0.0, -1.0))
         self.right.released.connect(self.stop_velocity)
 
         self.stop.clicked.connect(self.handle_emergency_stop)
         self.automove.clicked.connect(self.handle_automove)
+        # #추가한 부분(로그 검색, 불러오기)
+        # self.log_lineEdit.textChanged.connect(self.filter_logs)
+        # self.loadButton.clicked.connect(self.load_past_logs)
 
-        #추가한 부분(로그 검색, 불러오기)
-        self.log_lineEdit.textChanged.connect(self.filter_logs)
-        self.loadButton.clicked.connect(self.load_past_logs)
+    # --- [시뮬레이션 조종 로직] ---
+    def set_velocity(self, v, w):
+        if self.is_emergency: return
+        # if self.is_emergency or not self.is_connected: return # 연결 끊기면 조종 불가
+        if self.current_mode == "AUTO":
+            self.current_mode = "MANUAL"
+            self.add_smart_log("수동 모드로 전환", is_event=True)
+            self.update_mission_info("수동 조종 중")
+        self.v, self.w = v, w
+        self.move_timer.start()
+        self.worker.publish_twist(v, w)
+        self.add_smart_log(f"조종 신호 발생... (v:{v}, w:{w})")
+
+    def stop_velocity(self):
+        if self.is_emergency: return
+        self.v, self.w = 0.0, 0.0
+        self.move_timer.stop()
+        self.worker.publish_twist(0.0, 0.0)
+        self.add_smart_log("조종 신호 중단 (정지)")
+
+    # --- [긴급 정지 제어] ---
+    def handle_emergency_stop(self):
+        self.is_emergency =  not self.is_emergency
+        if self.is_emergency:
+          self.v, self.w = 0.0, 0.0
+          self.move_timer.stop()
+          self.worker.publish_twist(0.0, 0.0)
+          self.add_smart_log("[EMERGENCY] 긴급 정지 작동!", is_event=True)
+          self.add_smart_log("G002", is_event=True) # [2] 긴급 정지 기록
+          self.set_buttons_enabled(False)
+          self.stop.setText("정지 해제")
+        else:
+            self.worker.publish_twist(0.0, 0.0)
+            self.set_buttons_enabled(True)
+            self.add_smart_log("긴급 정지 해제", is_event=True)
+            self.stop.setText("긴급 정지")
+
+    # --- [자동 운행 및 복구] ---
+    def handle_automove(self):
+        if self.is_emergency:
+            self.add_smart_log("긴급 정지 해제: 운행 재개")
+            return
+        # if not self.is_connected:
+        #     self.add_smart_log("연결 오류: 미션 수행 불가능", is_event=True)
+        #     return
+
+        self.current_mode = "AUTO"
+        self.add_smart_log("모드 전환: 자동 운행 시작")
+        self.update_mission_info("순찰 구역 A 이동")
+        # 여기에 실제 ROS 자동항법 시작 명령 추가
 
     # --- [연결주기 체크 로직] ---
     def feed_heartbeat(self): #데이터가 들어올 때마다 호출되어 '마지막 수신 시간'을 갱신
@@ -483,19 +565,25 @@ class RobotDashboard(QWidget, Ui_Form):
             self.conn_status.setText("○ OFFLINE")
             self.conn_status.setStyleSheet("color: #e74c3c; font-weight: bold;")
             self.add_smart_log("[경고!]로봇과 연결 안됨!", is_event=True)
+            self.add_smart_log("E004", is_event=True) # [3] 연결 끊김 기록
             # self.stop_velocity() #오프라인일 경우, 강제 정지
 
     # --- [스마트 로그 시스템] ---
-    def add_smart_log(self, text, is_event=False):
-        timestamp = time.strftime('%Y-%m-%d %H-%M-%S', time.localtime())
-        full_msg = f"[{timestamp}] {text}"
+    def add_smart_log(self, data, is_event=False):
+        timestamp = time.strftime('%H:%M:%S', time.localtime())
+
+        if data in EVENT_CODES:
+            info = EVENT_CODES[data]
+            full_msg = f"[{timestamp}] [{data}] {info['desc']} ({info['level']})"
+        else:
+            full_msg = f"[{timestamp}] {data}"
 
         target_widget = self.eventWidget if is_event else self.logWidget
         target_widget.addItem(full_msg)
         target_widget.scrollToBottom()
 
-        with open(self.log_file_name, "a", encoding="utf-8") as f:
-            f.write(full_msg + "\n")
+        # with open(self.log_file_name, "a", encoding="utf-8") as f:
+        #     f.write(full_msg + "\n") 로그 저장 부분
 
     def filter_logs(self):
         search_text = self.log_lineEdit.text().lower()
@@ -514,19 +602,6 @@ class RobotDashboard(QWidget, Ui_Form):
             self.logWidget.addItem("-" * 30)
             self.add_smart_log(f"파일 불러오기 완료: {os.path.basename(file_path)}", is_event=True)
 
-    # --- [시뮬레이션 조종 로직] ---
-    def set_velocity(self, v, w):
-        if self.is_emergency: return
-        # if self.is_emergency or not self.is_connected: return # 연결 끊기면 조종 불가
-        self.v, self.w = v, w
-        self.move_timer.start()
-        self.add_smart_log(f"조종 신호 발생 중... (v:{v}, w:{w})")
-
-    def stop_velocity(self):
-        self.v, self.w = 0.0, 0.0
-        self.move_timer.stop()
-        self.add_smart_log("조종 신호 중단 (정지)")
-
     def simulate_move(self):
         if self.is_emergency: return
 
@@ -542,7 +617,7 @@ class RobotDashboard(QWidget, Ui_Form):
         if not self.move_timer.isActive():
             self.update_robot_pose(self.robot_x, self.robot_y)
 
-    # --- [기능 1: 배터리 업데이트] ---
+    # --- [배터리 업데이트] ---
     @Slot(float)
     def update_battery(self, value):
         self.feed_heartbeat()
@@ -571,9 +646,9 @@ class RobotDashboard(QWidget, Ui_Form):
                 if "[경고] 배터리 부족" in item.text():
                     self.eventWidget.takeItem(i) # 해당 아이템 삭제
 
-    # --- [기능 2: 지도 및 로봇 위치 표시] ---
-    @Slot(float, float, float)
-    def update_robot_pose(self, rx, ry, theta=0.0):
+    # --- [지도 및 로봇 위치 표시] ---
+    @Slot(float, float)
+    def update_robot_pose(self, rx, ry):
         self.feed_heartbeat()
         if self.map_image is None:
             # 지도가 없을 경우 821x241 크기의 흰색 배경 생성
@@ -587,6 +662,7 @@ class RobotDashboard(QWidget, Ui_Form):
         px = int((rx - self.map_origin[0]) / self.map_resolution)
         py = int((ry - self.map_origin[1]) / self.map_resolution)
         py = canvas.height() - py # Y축 반전 처리
+
         # 로봇 표시 (빨간 점)
         painter.setPen(QPen(Qt.red, 8))
         painter.drawPoint(px, py)
@@ -602,36 +678,6 @@ class RobotDashboard(QWidget, Ui_Form):
             self.add_smart_log(log_msg)
             self.logWidget.scrollToBottom()
             self.last_log_time = current_time
-
-    # --- [기능 3: 긴급 정지 제어] ---
-    def handle_emergency_stop(self):
-        self.is_emergency =  not self.is_emergency
-
-        if self.is_emergency:
-          self.v, self.w = 0.0, 0.0
-          self.move_timer.stop()
-          self.add_smart_log("[EMERGENCY] 긴급 정지 작동!", is_event=True)
-          self.set_buttons_enabled(False)
-          self.stop.setText("정지 해제")
-        else:
-            self.set_buttons_enabled(True)
-            self.add_smart_log("긴급 정지 해제", is_event=True)
-            self.stop.setText("긴급 정지")
-
-    # --- [기능 4: 자동 운행 및 복구] ---
-    def handle_automove(self):
-        if self.is_emergency:
-            self.add_smart_log("긴급 정지 해제: 운행 재개")
-            return
-
-        # if not self.is_connected:
-        #     self.add_smart_log("연결 오류: 미션 수행 불가능", is_event=True)
-        #     return
-
-        self.current_mode = "AUTO"
-        self.add_smart_log("모드 전환: 자동 운행 시작")
-        self.update_mission_info("순찰 구역 A 이동")
-        # 여기에 실제 ROS 자동항법 시작 명령 추가
 
     def set_buttons_enabled(self, status):
         self.go.setEnabled(status)
@@ -657,15 +703,23 @@ class RobotDashboard(QWidget, Ui_Form):
     @Slot(QImage)
     def update_camera_view(self, image):
         self.camera.setPixmap(QPixmap.fromImage(image))
+
     def closeEvent(self, event):
-        self.camera_worker.terminate() # 카메라 쓰레드 강제 종료
-        self.worker.terminate()        # 로봇 데이터 쓰레드 종료
-        event.accept()                 # 종료 승인
+        self.add_smart_log("G003", is_event=True) # [4] 종료 기록
+        self.worker.stop()
+        event.accept()
 # ---------------------------------------------------------
 # [3] 프로그램 실행
 # ---------------------------------------------------------
-if __name__ == '__main__':
+def main(args=None):
+    rclpy.init()
     app = QApplication(sys.argv)
     window = RobotDashboard()
     window.show()
-    sys.exit(app.exec())
+    status = app.exec()
+    window.worker.stop()
+    rclpy.shutdown()
+    sys.exit(status)
+
+if __name__ == '__main__':
+    main()
